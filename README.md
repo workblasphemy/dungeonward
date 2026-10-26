@@ -15,3 +15,44 @@
 **Workflow:** scoped task → branch → implementation → actual tests on available OS → Codex review → user-approved integration. Never feed all reference docs to every agent. For long sessions, replace stale chat history with a short current-state handoff (branch, files, decisions, failures, next step). Don't repeatedly resend standing rules within a session.
 
 **Authority:** existing `reference/docs/` contains approved decisions and open questions. These agent briefs are task routing instructions, not new game-design approvals. If there is a conflict, stop and surface it.
+
+## M0 foundation development
+
+The minimal Godot project shell and test infrastructure are implemented on
+`feature/m0-foundation`. Identity, lobby, transport and persistence are not yet
+implemented. Existing specifications remain at repository root; their proposed
+nested documentation paths are not actual paths in this checkout.
+
+Use exactly **Godot 4.7.2 stable**. Install a checksum-pinned official x64 build:
+
+```sh
+python tools/install_godot.py
+# Linux
+GODOT_BIN="$PWD/.tools/godot-4.7.2/Godot_v4.7.2-stable_linux.x86_64" ./tools/test.sh
+```
+
+```powershell
+# Windows PowerShell
+python tools/install_godot.py
+$env:GODOT_BIN = "$PWD/.tools/godot-4.7.2/Godot_v4.7.2-stable_win64_console.exe"
+./tools/test.ps1
+```
+
+Both runners verify the engine, import the project, run the nonempty shell tests,
+and start the main scene headlessly. Logs and revision/platform metadata go to
+ignored `artifacts/`. Pass `--self-test-failure` to either runner to intentionally
+verify nonzero failure propagation. The reported commit is the base commit when
+working changes have not been committed; it does not identify an uncommitted diff.
+Open `project.godot` in the same engine for visual development. In the cloud use
+`GODOT_BIN=/workspace/.local/bin/dungeonward-godot ./tools/test.sh`; that wrapper
+sets writable Godot data/config/cache directories.
+
+GitHub Actions runs the same checks on Windows and Linux after an authorized push
+or PR. Windows evidence is pending; M0 is not complete. See
+[ADR-0003](ADR-0003-modular-extensible-architecture.md) for proposals awaiting
+review and [M0 evidence](docs/M0-INITIALIZATION.md) for actual validation.
+
+For exact independent execution steps see [DeepSeek testing](docs/DEEPSEEK-TESTING.md).
+Reserved domains live in `game/core/`; future content, UI and world boundaries are
+explained in the README files under `game/`. Empty directories reserve ownership,
+not implemented features or finalized APIs.

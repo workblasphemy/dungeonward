@@ -1,0 +1,40 @@
+name: Foundation tests
+on:
+  push:
+    branches: [main, 'feature/**']
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  foundation:
+    name: Foundation (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Install verified Godot 4.7.2
+        shell: bash
+        run: python tools/install_godot.py
+      - name: Linux import, tests and startup
+        if: runner.os == 'Linux'
+        shell: bash
+        env:
+          GODOT_BIN: .tools/godot-4.7.2/Godot_v4.7.2-stable_linux.x86_64
+        run: ./tools/test.sh
+      - name: Windows import, tests and startup
+        if: runner.os == 'Windows'
+        shell: pwsh
+        env:
+          GODOT_BIN: .tools/godot-4.7.2/Godot_v4.7.2-stable_win64_console.exe
+        run: ./tools/test.ps1
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: foundation-${{ matrix.os }}
+          path: artifacts/
+          if-no-files-found: warn
