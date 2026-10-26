@@ -1,0 +1,8 @@
+# Dungeonward — shared rules (read once)
+Godot **4.7.2** / GDScript; classless first-person low-poly fantasy dungeon crawler; 1–4 character slots across local, ENet online and hybrid play. GitHub is source of truth; Windows and Linux must work by M3. Verify engine availability, never assume tests passed.
+
+**Approved invariants:** host-authoritative ENet; separate peer/local-slot/session-player/persistent-character IDs; host-approved unique character reservations; independent per-local-player input/camera/HUD; persistent separate local profiles; owner-device atomic revisioned character saves, town autosave on entry, ~2s dirty debounce and 30s interval; one shared seeded floor with readiness barriers. Gameplay: Strength/Dexterity/Vitality/Magic, death respawn with modest gold loss and gear retained, personal loot, majority floor-transition vote, attacks/spells/jump/simple dodge, four difficulty presets plus sliders/capped bonuses, grid inventory. **Unspecified numeric rules remain undecided.**
+
+**Read only what the task needs.** Use `reference/docs/FOUNDATION_IMPLEMENTATION_SPEC.md`, `reference/docs/adr/`, `reference/docs/features/`, and `reference/docs/MASTER_BLUEPRINT.md` as a searchable library, **not mandatory full-context input**. Read relevant sections; flag contradictions, don't invent approvals.
+
+**Delivery:** one scoped branch/task; avoid unrelated edits. Provide files changed, interfaces affected, commands + actual test results (or `not run`), Windows/Linux implications, assumptions, risks, and review request. No unapproved merge/push, secrets, or unlicensed assets. Codex coordinates integration.
