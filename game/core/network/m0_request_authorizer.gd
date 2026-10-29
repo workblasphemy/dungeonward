@@ -4,7 +4,8 @@ extends RefCounted
 const Registry = preload("res://game/core/lobby/lobby_registry.gd")
 const TokenProvider = preload("res://game/core/identity/reservation_token_provider.gd")
 const PROTOCOL_VERSION := 1
-const MAX_REQUESTS := 4096
+const REPLAY_WINDOW_MS := 60000
+const MAX_REQUESTS_PER_PEER := 128
 
 var _registry: RefCounted
 var _token_provider: RefCounted
@@ -33,17 +34,30 @@ func _valid_request(payload: Dictionary, required: Array[String]) -> bool:
 func _replay_key(sender_peer_id: int, request_id: String) -> String:
     return "%d:%s" % [sender_peer_id, request_id]
 
+func _sweep_replays(now_ms: int) -> void:
+    for key in _responses.keys():
+        if now_ms >= _responses[key]["expires_at_ms"]:
+            _responses.erase(key)
+
+func _peer_cached_count(sender_peer_id: int) -> int:
+    var count: int = 0
+    for key in _responses.keys():
+        if key.begins_with("%d:" % sender_peer_id):
+            count += 1
+    return count
+
 func _invoke(sender_peer_id: int, payload: Dictionary, required: Array[String],
         action: String, now_ms: int) -> Dictionary:
     if sender_peer_id <= 0 or not _valid_request(payload, required):
         return _fail("INVALID_MESSAGE")
+    _sweep_replays(now_ms)
     var key := _replay_key(sender_peer_id, payload["request_id"])
     if _responses.has(key):
         var previous: Dictionary = _responses[key]
         if previous["action"] != action or previous["payload"] != payload:
             return _fail("REQUEST_ID_CONFLICT")
         return previous["response"].duplicate(true)
-    if _responses.size() >= MAX_REQUESTS:
+    if _peer_cached_count(sender_peer_id) >= MAX_REQUESTS_PER_PEER:
         return _fail("REQUEST_LIMIT")
     var result: Dictionary
     match action:
@@ -72,8 +86,11 @@ func _invoke(sender_peer_id: int, payload: Dictionary, required: Array[String],
                 payload["reservation_token"], payload["expected_revision"], payload["next_state"], now_ms)
         _:
             return _fail("UNKNOWN_ACTION")
+    # Bounded, short-lived replay cache. A successful reservation must replay its
+    # original token; stripping it would break lost-response retry semantics.
+    # Never log or serialize this in-memory cache.
     _responses[key] = {"action": action, "payload": payload.duplicate(true),
-        "response": result.duplicate(true)}
+        "response": result.duplicate(true), "expires_at_ms": now_ms + REPLAY_WINDOW_MS}
     return result.duplicate(true)
 
 func request_slot(sender_peer_id: int, payload: Dictionary, now_ms: int) -> Dictionary:
@@ -92,6 +109,7 @@ func registry_snapshot() -> Array[Dictionary]:
 
 func host_expire(now_ms: int) -> void:
     _registry.expire(now_ms)
+    _sweep_replays(now_ms)
 
 func host_disconnect(peer_id: int) -> void:
     _registry.release_peer(peer_id)
