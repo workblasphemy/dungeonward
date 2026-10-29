@@ -75,9 +75,9 @@ func _initialize() -> void:
         check(lobby.refresh_pending(5, pending["session_player_id"], "token-pending", 60099)["ok"],
             "valid progress refreshes selected-seat timeout")
         lobby.expire(120098)
-        check(lobby.snapshot().size() == 2, "refreshed seat survives until deadline")
+        check(lobby.snapshot().size() == 1, "refreshed seat survives until deadline")
         lobby.expire(120099)
-        check(lobby.snapshot().size() == 1, "selected seat expires at refreshed deadline")
+        check(lobby.snapshot().is_empty(), "selected seat expires at refreshed deadline")
         var reuse: Dictionary = lobby.reserve(6, 0, 1, 120099, "token-reuse")
         check(lobby.select_character(6, reuse["session_player_id"], "token-reuse",
             "profile-r", "character-p", 1, 0, 120099)["ok"],
