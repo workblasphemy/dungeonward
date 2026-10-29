@@ -9,6 +9,7 @@ if ($version -notmatch '^4\.7\.2\.stable\.') { throw 'Godot 4.7.2 stable require
 git rev-parse HEAD | Set-Content artifacts/commit.log
 [System.Runtime.InteropServices.RuntimeInformation]::OSDescription | Set-Content artifacts/platform.log
 function Invoke-Engine([string]$LogFile, [string[]]$EngineArgs) {
+    $ErrorActionPreference = 'Continue'
     & $engine @EngineArgs 2>&1 | Tee-Object $LogFile
     $code = $LASTEXITCODE
     if ($code -ne 0) { exit $code }
