@@ -1,17 +1,17 @@
 # DUNGEONWARD — Feature 14: Controller & Input
 
 > **Version:** 0.1 · **Status:** Development specification, not implemented  
-> **Master authority:** [`../MASTER_BLUEPRINT.md`](../MASTER_BLUEPRINT.md) v0.2  
+> **Master authority:** [`MASTER_BLUEPRINT.md`](MASTER_BLUEPRINT.md) v0.5  
 > **Milestones:** M1–M2, M6  
 > **Prerequisites/integration:** F04, F05, F10  
-> **Engine:** Godot 4.x / GDScript · **Updated:** 2026-10-26
+> **Engine:** Godot 4.7.2 / GDScript · **Updated:** 2026-10-26
 
-> **Architecture approval:** ARCH-02, ARCH-03, ARCH-04, ARCH-08 **ACCEPTED** (2026-10-26). See [`../docs/adr/ADR-0001-foundational-architecture.md`](../docs/adr/ADR-0001-foundational-architecture.md). This approval does **not** resolve proposed gameplay choices or OPEN decisions.
+> **Architecture approval:** ARCH-02, ARCH-03, ARCH-04, ARCH-08 **ACCEPTED** (2026-10-26). See [`ADR-0001-foundational-architecture.md`](ADR-0001-foundational-architecture.md). This approval does **not** resolve proposed gameplay choices or OPEN decisions.
 
 
 ## Accepted gameplay contracts — ADR-0002
 
-The following design choices are **approved**, not optional proposals. See [`../docs/adr/ADR-0002-gameplay-design-v0.1.md`](../docs/adr/ADR-0002-gameplay-design-v0.1.md).
+The following design choices are **approved**, not optional proposals. See [`ADR-0002-gameplay-design-v0.1.md`](ADR-0002-gameplay-design-v0.1.md).
 
 - **GAME-04 — Party-majority dungeon transitions:** The party advances dungeon floors together after a majority vote of eligible active party members. **Integration:** F01/F03/F04 implement host-owned vote and synchronized transition barrier. Majority means strictly more than half of eligible voters. Eligible roster, vote timeout, ties, abstentions, and disconnected voters need explicit policies before coding.
 - **GAME-06 — Simple v0.1 combat:** v0.1 includes basic attacks, spells, jumping, and a simple dodge. Complex parries, stamina-gated basic attacks, and advanced combo systems are not part of the required v0.1 combat scope. **Integration:** F02 actions and F14 default mappings; exact dodge cooldown/invulnerability, spell costs, and weapon timing remain OPEN.

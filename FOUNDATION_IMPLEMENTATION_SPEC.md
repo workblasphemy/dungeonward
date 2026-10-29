@@ -5,7 +5,7 @@
 > **Target engine:** Godot **4.7.2** (project-owner-selected; verify that the exact binary/version is available on each runner before execution)  
 > **Source control:** GitHub; Windows and Linux development workspaces  
 > **Platform acceptance:** Windows and Linux functional by the end of M3  
-> **Authority:** `MASTER_BLUEPRINT.md` v0.4, ADR-0001, ADR-0002; this spec cannot silently change approved decisions.
+> **Authority:** `MASTER_BLUEPRINT.md` v0.5, ADR-0001, ADR-0002; this spec cannot silently change approved decisions.
 
 ## 1. Plain-English explanation of the contracts
 
@@ -31,17 +31,24 @@
 dungeonward/
 ├── project.godot
 ├── README.md
+├── 00_SHARED_RULES.md
+├── 01_CODEX.md                  # role files through 07_DEEPSEEK.md
+├── TASK_HANDOFF.md
+├── FEATURE_INDEX.md
+├── MASTER_BLUEPRINT.md
+├── FOUNDATION_IMPLEMENTATION_SPEC.md
+├── ADR-0001-foundational-architecture.md
+├── ADR-0002-gameplay-design-v0.1.md
+├── ADR-0003-modular-extensible-architecture.md
+├── 01-core-gameplay.md          # feature specs through 14-controller-input.md
 ├── LICENSE                      # choose before first public release
 ├── .gitignore                   # Godot cache/builds/user data
 ├── .gitattributes               # normalize text line endings
 ├── .github/workflows/
 │   └── foundation-tests.yml
-├── docs/
-│   ├── MASTER_BLUEPRINT.md
-│   ├── FOUNDATION_IMPLEMENTATION_SPEC.md
-│   ├── adr/ADR-0001-foundational-architecture.md
-│   ├── adr/ADR-0002-gameplay-design-v0.1.md
-│   └── features/                 # 14 specifications
+├── docs/                        # M0 evidence only; specifications stay at root
+│   ├── M0-INITIALIZATION.md
+│   └── DEEPSEEK-TESTING.md
 ├── game/
 │   ├── main.tscn
 │   ├── autoload/session_bootstrap.gd
@@ -60,10 +67,13 @@ dungeonward/
 │   ├── integration/{test_local_slots,test_rpc_authority,test_town_saves}.gd
 │   └── fixtures/
 ├── tools/
+│   ├── install_godot.py
 │   ├── test.sh
 │   └── test.ps1
 └── artifacts/                    # ignored: logs/reports
 ```
+
+Specification paths in this tree match this checkout: design documents stay at the repository root, which is the layout ADR-0003 proposes leaving in place until a later reconciliation. `docs/` holds M0 evidence and the DeepSeek test guide. Entries under `game/`, `tests/`, and `tools/` that are not in the checkout remain proposed.
 
 **Autoload rule:** only `SessionBootstrap` (or similarly minimal entrypoint) is global. Session services are composed and injected, not scattered across unrelated autoload singletons. `project.godot` and `.tscn` must use relative `res://` paths and case-correct file names.
 

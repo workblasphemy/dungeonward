@@ -12,5 +12,5 @@ Reserved Foundation v0.5 domains; these directories contain no implemented servi
 
 Keep deterministic domain logic independent of scene trees, rendering and transport.
 Inject clocks, storage and transport at composition boundaries when implemented.
-No autoload is needed for the current shell. See ADR-0003 for proposed interfaces;
+No autoload is needed for the current shell. See [ADR-0003](../../ADR-0003-modular-extensible-architecture.md) for proposed interfaces;
 these reserved paths do not finalize APIs or implement multiplayer/persistence.

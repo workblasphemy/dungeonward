@@ -1,17 +1,17 @@
 # DUNGEONWARD — Feature 06: Inventory & Equipment
 
 > **Version:** 0.1 · **Status:** Development specification, not implemented  
-> **Master authority:** [`../MASTER_BLUEPRINT.md`](../MASTER_BLUEPRINT.md) v0.2  
+> **Master authority:** [`MASTER_BLUEPRINT.md`](MASTER_BLUEPRINT.md) v0.5  
 > **Milestones:** M6–M7  
 > **Prerequisites/integration:** F04, F05, F08, F10, F13  
-> **Engine:** Godot 4.x / GDScript · **Updated:** 2026-10-26
+> **Engine:** Godot 4.7.2 / GDScript · **Updated:** 2026-10-26
 
-> **Architecture approval:** ARCH-01, ARCH-05, ARCH-06, ARCH-08 **ACCEPTED** (2026-10-26). See [`../docs/adr/ADR-0001-foundational-architecture.md`](../docs/adr/ADR-0001-foundational-architecture.md). This approval does **not** resolve proposed gameplay choices or OPEN decisions.
+> **Architecture approval:** ARCH-01, ARCH-05, ARCH-06, ARCH-08 **ACCEPTED** (2026-10-26). See [`ADR-0001-foundational-architecture.md`](ADR-0001-foundational-architecture.md). This approval does **not** resolve proposed gameplay choices or OPEN decisions.
 
 
 ## Accepted gameplay contracts — ADR-0002
 
-The following design choices are **approved**, not optional proposals. See [`../docs/adr/ADR-0002-gameplay-design-v0.1.md`](../docs/adr/ADR-0002-gameplay-design-v0.1.md).
+The following design choices are **approved**, not optional proposals. See [`ADR-0002-gameplay-design-v0.1.md`](ADR-0002-gameplay-design-v0.1.md).
 
 - **GAME-02 — Death and recovery:** On death, the character respawns with a modest gold penalty and retains all equipped and carried items. **Integration:** F01 death flow, F02 death event, F05 recovery state, F06 atomic currency debit, F09 safe respawn, F13 save revision. Exact penalty and respawn timing/location remain OPEN.
 - **GAME-03 — Personal instanced multiplayer loot:** Each eligible player receives personal instanced loot; there is no competition to pick up another player's drops. **Integration:** F08 reward authority generates player-scoped grants/visibility; F06 atomic inventory transactions. Eligibility, reward quantity, and optional trading remain OPEN.

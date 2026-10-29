@@ -1,17 +1,17 @@
 # DUNGEONWARD — Feature 12: Difficulty & Scaling
 
 > **Version:** 0.1 · **Status:** Development specification, not implemented  
-> **Master authority:** [`../MASTER_BLUEPRINT.md`](../MASTER_BLUEPRINT.md) v0.2  
+> **Master authority:** [`MASTER_BLUEPRINT.md`](MASTER_BLUEPRINT.md) v0.5  
 > **Milestones:** M5–M7  
 > **Prerequisites/integration:** F03, F04, F05, F07, F08  
-> **Engine:** Godot 4.x / GDScript · **Updated:** 2026-10-26
+> **Engine:** Godot 4.7.2 / GDScript · **Updated:** 2026-10-26
 
-> **Architecture approval:** ARCH-01, ARCH-02, ARCH-07 **ACCEPTED** (2026-10-26). See [`../docs/adr/ADR-0001-foundational-architecture.md`](../docs/adr/ADR-0001-foundational-architecture.md). This approval does **not** resolve proposed gameplay choices or OPEN decisions.
+> **Architecture approval:** ARCH-01, ARCH-02, ARCH-07 **ACCEPTED** (2026-10-26). See [`ADR-0001-foundational-architecture.md`](ADR-0001-foundational-architecture.md). This approval does **not** resolve proposed gameplay choices or OPEN decisions.
 
 
 ## Accepted gameplay contracts — ADR-0002
 
-The following design choices are **approved**, not optional proposals. See [`../docs/adr/ADR-0002-gameplay-design-v0.1.md`](../docs/adr/ADR-0002-gameplay-design-v0.1.md).
+The following design choices are **approved**, not optional proposals. See [`ADR-0002-gameplay-design-v0.1.md`](ADR-0002-gameplay-design-v0.1.md).
 
 - **GAME-07 — Difficulty and rewards:** Offer four difficulty presets, bounded custom sliders, and modest capped reward bonuses tied to approved difficulty settings. **Integration:** F12 versioned profile and caps, F08 reward multiplier integration. Preset names, exact caps and reward curve remain OPEN.
 

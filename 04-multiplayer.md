@@ -1,17 +1,17 @@
 # DUNGEONWARD — Feature 04: Multiplayer System
 
 > **Version:** 0.1 | **Status:** Development specification / not implemented
-> **Authority:** `MASTER_BLUEPRINT.md` v0.4
-> **Engine:** Godot 4.x, GDScript, ENet
+> **Authority:** [`MASTER_BLUEPRINT.md`](MASTER_BLUEPRINT.md) v0.5
+> **Engine:** Godot 4.7.2, GDScript, ENet
 > **Milestones:** M0–M2, integrated through M7
 > **Next dependencies:** F14 Controller & Input; F05 Character; F13 Save & Persistence; F10 UI
 
-> **Architecture approval:** ARCH-01, ARCH-02, ARCH-03, ARCH-04, ARCH-05, ARCH-06, ARCH-07, ARCH-08 **ACCEPTED** (2026-10-26). See [`../docs/adr/ADR-0001-foundational-architecture.md`](../docs/adr/ADR-0001-foundational-architecture.md). This approval does **not** resolve proposed gameplay choices or OPEN decisions.
+> **Architecture approval:** ARCH-01, ARCH-02, ARCH-03, ARCH-04, ARCH-05, ARCH-06, ARCH-07, ARCH-08 **ACCEPTED** (2026-10-26). See [`ADR-0001-foundational-architecture.md`](ADR-0001-foundational-architecture.md). This approval does **not** resolve proposed gameplay choices or OPEN decisions.
 
 
 ## Accepted gameplay contracts — ADR-0002
 
-The following design choices are **approved**, not optional proposals. See [`../docs/adr/ADR-0002-gameplay-design-v0.1.md`](../docs/adr/ADR-0002-gameplay-design-v0.1.md).
+The following design choices are **approved**, not optional proposals. See [`ADR-0002-gameplay-design-v0.1.md`](ADR-0002-gameplay-design-v0.1.md).
 
 - **GAME-03 — Personal instanced multiplayer loot:** Each eligible player receives personal instanced loot; there is no competition to pick up another player's drops. **Integration:** F08 reward authority generates player-scoped grants/visibility; F06 atomic inventory transactions. Eligibility, reward quantity, and optional trading remain OPEN.
 - **GAME-04 — Party-majority dungeon transitions:** The party advances dungeon floors together after a majority vote of eligible active party members. **Integration:** F01/F03/F04 implement host-owned vote and synchronized transition barrier. Majority means strictly more than half of eligible voters. Eligible roster, vote timeout, ties, abstentions, and disconnected voters need explicit policies before coding.

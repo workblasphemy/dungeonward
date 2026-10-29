@@ -11,11 +11,11 @@
 
 The project owner selected **Godot 4.7.2**, **GitHub** source control, and **Windows + Linux** as required functional platforms by the end of **M3**. Development and testing span the owner's Windows PC and DeepSeek's Linux workspace; DeepSeek may also run local PC tests where explicitly permitted. Test execution must produce verifiable logs and version/OS/commit metadata; no test is considered passed solely on an agent's assertion.
 
-**Implementation source:** [`docs/FOUNDATION_IMPLEMENTATION_SPEC.md`](docs/FOUNDATION_IMPLEMENTATION_SPEC.md) defines M0–M3 DTOs, lobby reservations, RPC validation, session/device lifecycles, test strategy, and platform acceptance. Its proposed defaults are implementation details, **not** additional gameplay approvals. GitHub repository URL and availability of the exact engine build remain to be verified.
+**Implementation source:** [`FOUNDATION_IMPLEMENTATION_SPEC.md`](FOUNDATION_IMPLEMENTATION_SPEC.md) defines M0–M3 DTOs, lobby reservations, RPC validation, session/device lifecycles, test strategy, and platform acceptance. Its proposed defaults are implementation details, **not** additional gameplay approvals. GitHub repository URL and availability of the exact engine build remain to be verified.
 
 ## Architecture approval record
 
-**ACCEPTED (2026-10-26):** ARCH-01 through ARCH-08, documented in [`docs/adr/ADR-0001-foundational-architecture.md`](docs/adr/ADR-0001-foundational-architecture.md). These contracts govern F01–F14. Eight gameplay choices are also **ACCEPTED** under [ADR-0002](docs/adr/ADR-0002-gameplay-design-v0.1.md); only decisions not explicitly approved remain **OPEN**.
+**ACCEPTED (2026-10-26):** ARCH-01 through ARCH-08, documented in [`ADR-0001-foundational-architecture.md`](ADR-0001-foundational-architecture.md). These contracts govern F01–F14. Eight gameplay choices are also **ACCEPTED** under [ADR-0002](ADR-0002-gameplay-design-v0.1.md); only decisions not explicitly approved remain **OPEN**.
 
 | ID | Accepted contract |
 |---|---|
@@ -85,20 +85,20 @@ Create an original fantasy dungeon crawler inspired by the rewarding town–dung
 
 | ID | Feature | Planned file | Core responsibility |
 |---|---|---|---|
-| F01 | Core Gameplay | `features/01-core-gameplay.md` | Game loop, interaction, transitions |
-| F02 | Combat System | `features/02-combat.md` | Attacks, damage, hit feedback, abilities |
-| F03 | Procedural Dungeon Generation | `features/03-dungeon-generation.md` | Layouts, rooms, connectivity, floor state |
-| F04 | Multiplayer System | `features/04-multiplayer.md` | Lobbies, authority, hybrid sessions, joins |
-| F05 | Character System | `features/05-character-system.md` | Creation, stats, levels, identity |
-| F06 | Inventory & Equipment | `features/06-inventory-equipment.md` | Inventory, slots, item operations |
-| F07 | Enemy System & AI | `features/07-enemy-ai.md` | Enemy behaviors, spawn integration |
-| F08 | Loot & Reward System | `features/08-loot-rewards.md` | Drops, rarities, affixes, rewards |
-| F09 | Town & Hub System | `features/09-town-hub.md` | Safe hub, services, save boundaries |
-| F10 | UI & Menu System | `features/10-ui-menus.md` | HUD, navigation, menus, split-screen UI |
-| F11 | Audio, Visuals & Immersion | `features/11-audio-visuals.md` | Style, audio, VFX, performance |
-| F12 | Difficulty & Scaling | `features/12-difficulty-scaling.md` | Presets, modifiers, encounter budgets |
-| F13 | Save & Persistence | `features/13-save-persistence.md` | Character saves, migration, recovery |
-| F14 | Controller & Input | `features/14-controller-input.md` | Device routing, remapping, join gesture |
+| F01 | Core Gameplay | `01-core-gameplay.md` | Game loop, interaction, transitions |
+| F02 | Combat System | `02-combat.md` | Attacks, damage, hit feedback, abilities |
+| F03 | Procedural Dungeon Generation | `03-dungeon-generation.md` | Layouts, rooms, connectivity, floor state |
+| F04 | Multiplayer System | `04-multiplayer.md` | Lobbies, authority, hybrid sessions, joins |
+| F05 | Character System | `05-character-system.md` | Creation, stats, levels, identity |
+| F06 | Inventory & Equipment | `06-inventory-equipment.md` | Inventory, slots, item operations |
+| F07 | Enemy System & AI | `07-enemy-ai.md` | Enemy behaviors, spawn integration |
+| F08 | Loot & Reward System | `08-loot-rewards.md` | Drops, rarities, affixes, rewards |
+| F09 | Town & Hub System | `09-town-hub.md` | Safe hub, services, save boundaries |
+| F10 | UI & Menu System | `10-ui-menus.md` | HUD, navigation, menus, split-screen UI |
+| F11 | Audio, Visuals & Immersion | `11-audio-visuals.md` | Style, audio, VFX, performance |
+| F12 | Difficulty & Scaling | `12-difficulty-scaling.md` | Presets, modifiers, encounter budgets |
+| F13 | Save & Persistence | `13-save-persistence.md` | Character saves, migration, recovery |
+| F14 | Controller & Input | `14-controller-input.md` | Device routing, remapping, join gesture |
 
 Feature documents should follow: **Purpose → Locked requirements → Out-of-scope → Data/resources → Scenes/services → API/contracts → Network authority → Persistence → UI/input → Edge cases → Tests → Acceptance criteria → Dependencies**.
 
@@ -298,20 +298,20 @@ Automated tests: pure stat/damage formulas; loot roll reproducibility; item tran
 
 | Order | Feature | Specification | Why at this stage | Primary milestone(s) |
 |---|---|---|---|---|
-| 1 | **F04 — Multiplayer System** | `features/04-multiplayer.md` | Define peers vs players, lobby slots, host authority, session identity, joining, and replication contracts first. | M0–M2 |
-| 2 | **F14 — Controller & Input** | `features/14-controller-input.md` | Implement controller ownership, Start-twice joining, local input routing, and independent player controls. | M1–M2 |
-| 3 | **F05 — Character System** | `features/05-character-system.md` | Establish required character creation/selection, character IDs, attributes, and per-player spawn gates. | M1–M3 |
-| 4 | **F13 — Save & Persistence** | `features/13-save-persistence.md` | Validate per-character ownership, serialization, autosave/recovery, and online save acknowledgements before valuable loot exists. | M3 |
-| 5 | **F10 — UI & Menu System** | `features/10-ui-menus.md` | Build controller-first lobby, character, HUD, and split-screen UI primitives needed by subsequent systems. | M1–M3, M6 |
-| 6 | **F01 — Core Gameplay** | `features/01-core-gameplay.md` | Define the playable world loop, interactions, town/dungeon transitions, and per-player state flow. | M3–M7 |
-| 7 | **F02 — Combat System** | `features/02-combat.md` | Implement authoritative attacks, hit/damage contracts, weapon timing, and feedback before enemy content. | M4 |
-| 8 | **F07 — Enemy System & AI** | `features/07-enemy-ai.md` | Add reusable enemies and AI that consume combat contracts and support host-owned simulation. | M4–M5 |
-| 9 | **F03 — Procedural Dungeon Generation** | `features/03-dungeon-generation.md` | Generate seeded, validated shared floors and integrate enemy spawn locations. | M5 |
-| 10 | **F12 — Difficulty & Scaling** | `features/12-difficulty-scaling.md` | Apply presets, party-size factors, and encounter budgets to established enemies and dungeon generation. | M5–M6 |
-| 11 | **F06 — Inventory & Equipment** | `features/06-inventory-equipment.md` | Add validated item ownership, equipment, and transactions on top of established character/save contracts. | M6 |
-| 12 | **F08 — Loot & Reward System** | `features/08-loot-rewards.md` | Add drops, rarities, affixes, and rewards using the authoritative inventory and encounter systems. | M6 |
-| 13 | **F09 — Town & Hub System** | `features/09-town-hub.md` | Integrate merchants, storage, safe-zone transitions, and the already-tested town autosave trigger. | M3, M7 |
-| 14 | **F11 — Audio, Visuals & Immersion** | `features/11-audio-visuals.md` | Polish presentation and performance after the full loop is demonstrable; basic placeholder feedback exists earlier. | M4–M8 |
+| 1 | **F04 — Multiplayer System** | `04-multiplayer.md` | Define peers vs players, lobby slots, host authority, session identity, joining, and replication contracts first. | M0–M2 |
+| 2 | **F14 — Controller & Input** | `14-controller-input.md` | Implement controller ownership, Start-twice joining, local input routing, and independent player controls. | M1–M2 |
+| 3 | **F05 — Character System** | `05-character-system.md` | Establish required character creation/selection, character IDs, attributes, and per-player spawn gates. | M1–M3 |
+| 4 | **F13 — Save & Persistence** | `13-save-persistence.md` | Validate per-character ownership, serialization, autosave/recovery, and online save acknowledgements before valuable loot exists. | M3 |
+| 5 | **F10 — UI & Menu System** | `10-ui-menus.md` | Build controller-first lobby, character, HUD, and split-screen UI primitives needed by subsequent systems. | M1–M3, M6 |
+| 6 | **F01 — Core Gameplay** | `01-core-gameplay.md` | Define the playable world loop, interactions, town/dungeon transitions, and per-player state flow. | M3–M7 |
+| 7 | **F02 — Combat System** | `02-combat.md` | Implement authoritative attacks, hit/damage contracts, weapon timing, and feedback before enemy content. | M4 |
+| 8 | **F07 — Enemy System & AI** | `07-enemy-ai.md` | Add reusable enemies and AI that consume combat contracts and support host-owned simulation. | M4–M5 |
+| 9 | **F03 — Procedural Dungeon Generation** | `03-dungeon-generation.md` | Generate seeded, validated shared floors and integrate enemy spawn locations. | M5 |
+| 10 | **F12 — Difficulty & Scaling** | `12-difficulty-scaling.md` | Apply presets, party-size factors, and encounter budgets to established enemies and dungeon generation. | M5–M6 |
+| 11 | **F06 — Inventory & Equipment** | `06-inventory-equipment.md` | Add validated item ownership, equipment, and transactions on top of established character/save contracts. | M6 |
+| 12 | **F08 — Loot & Reward System** | `08-loot-rewards.md` | Add drops, rarities, affixes, and rewards using the authoritative inventory and encounter systems. | M6 |
+| 13 | **F09 — Town & Hub System** | `09-town-hub.md` | Integrate merchants, storage, safe-zone transitions, and the already-tested town autosave trigger. | M3, M7 |
+| 14 | **F11 — Audio, Visuals & Immersion** | `11-audio-visuals.md` | Polish presentation and performance after the full loop is demonstrable; basic placeholder feedback exists earlier. | M4–M8 |
 
 **Important sequencing notes:**
 
@@ -327,8 +327,8 @@ Automated tests: pure stat/damage formulas; loot roll reproducibility; item tran
 - Git repository from day one; protect stable main; feature branches and reviewed pull requests.
 - Every code change links to a feature spec and acceptance criterion.
 - Add automated tests for every pure-data subsystem before expanding content.
-- Keep generated art/concept sheets in `docs/concepts/` and implementation specs in `docs/`; concept art never overrides requirements.
-- Document important decisions in `docs/adr/NNNN-title.md` with context, decision, and consequences.
+- Keep implementation specifications at the repository root. Concept art never overrides requirements.
+- Document important decisions in a repository-root `ADR-NNNN-title.md` (see `ADR-0001-foundational-architecture.md` and `ADR-0002-gameplay-design-v0.1.md`) with context, decision, and consequences.
 - Require test evidence and multiplayer regression checks before merging network, inventory, or persistence changes.
 - Separate MVP-critical work from stretch goals; do not let cloud saves, public matchmaking, or complex crafting delay the vertical slice.
 
@@ -347,7 +347,7 @@ Automated tests: pure stat/damage formulas; loot roll reproducibility; item tran
 
 ## 17. Decisions to finalize before detailed feature implementation
 
-Eight high-level gameplay decisions are **ACCEPTED** in [ADR-0002](docs/adr/ADR-0002-gameplay-design-v0.1.md). Remaining implementation-level decisions:
+Eight high-level gameplay decisions are **ACCEPTED** in [ADR-0002](ADR-0002-gameplay-design-v0.1.md). Remaining implementation-level decisions:
 
 1. Exact derived-stat formulas, XP progression, attribute points, and respec policy (four core attributes are locked).
 2. Death penalty amount/cap, respawn location, and any temporary protection (keep equipment and respawn are locked).

@@ -1,6 +1,6 @@
 # Dungeonward AI team v0.2 — token-optimized
 
-**Quick start:** Give an agent `agents/00_SHARED_RULES.md`, its one role file, and a filled `templates/TASK_HANDOFF.md`. Add only relevant **excerpts** from `reference/docs/` and source files. The `reference/` directory is included for convenient retrieval, **not** for ingestion in full.
+**Quick start:** Give an agent `00_SHARED_RULES.md`, its one role file (`01_CODEX.md` through `07_DEEPSEEK.md`), and a filled `TASK_HANDOFF.md`. Add only relevant **excerpts** from the repository-root specifications (`MASTER_BLUEPRINT.md`, `FOUNDATION_IMPLEMENTATION_SPEC.md`, `FEATURE_INDEX.md`, the ADR files, and the affected feature spec) and source files. Read the sections the task needs, **not** every specification in full.
 
 | Agent | Role file | Default docs to fetch *only when needed* |
 |---|---|---|
@@ -14,14 +14,15 @@
 
 **Workflow:** scoped task → branch → implementation → actual tests on available OS → Codex review → user-approved integration. Never feed all reference docs to every agent. For long sessions, replace stale chat history with a short current-state handoff (branch, files, decisions, failures, next step). Don't repeatedly resend standing rules within a session.
 
-**Authority:** existing `reference/docs/` contains approved decisions and open questions. These agent briefs are task routing instructions, not new game-design approvals. If there is a conflict, stop and surface it.
+**Authority:** repository-root specifications contain approved decisions and open questions. These agent briefs are task routing instructions, not new game-design approvals. If there is a conflict, stop and surface it.
 
 ## M0 foundation development
 
 The minimal Godot project shell and test infrastructure are implemented on
 `feature/m0-foundation`. Identity, lobby, transport and persistence are not yet
-implemented. Existing specifications remain at repository root; their proposed
-nested documentation paths are not actual paths in this checkout.
+implemented. Specifications stay at the repository root, and the links in those
+documents point at that layout. `docs/` holds M0 evidence and the DeepSeek test
+guide.
 
 Use exactly **Godot 4.7.2 stable**. Install a checksum-pinned official x64 build:
 

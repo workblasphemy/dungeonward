@@ -8,7 +8,7 @@ The owner subsequently authorized committing and pushing the M0 scaffold to
 
 Latest access recheck: `origin/main` is now
 `a5aeca4998ba818ccc3206e9693ddb56790de599`, which adds only
-`DUNGEONWARD_AI_CAPABILITY_ROUTING_v0.3.md`. Reviewed via `git show origin/main:...`;
+`DUNGEONWARD_AI_CAPABILITY_ROUTING_v0.3.md` (on `origin/main` only; not in this checkout). Reviewed via `git show origin/main:...`;
 no remote commit was merged and the branch base remains unchanged. Foundation
 v0.5 and the shared/role instructions are unchanged on the remote.
 

@@ -2,7 +2,7 @@
 **Agent / branch:**
 **Goal:**
 **Scope (files/components):**
-**Read:** `agents/00_SHARED_RULES.md`, your agent brief, then ONLY: [specific docs/sections/source files]
+**Read:** `00_SHARED_RULES.md`, your role file (`01_CODEX.md` through `07_DEEPSEEK.md`), then ONLY: [specific docs/sections/source files]
 **Inputs / existing interfaces:**
 **Constraints / explicitly unresolved decisions:**
 **Deliverables:**

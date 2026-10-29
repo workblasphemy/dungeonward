@@ -3,7 +3,7 @@
 `weapons/` and `bosses/` reserve locations for future content only. No weapons,
 bosses, stats or combat behavior are implemented in M0.
 
-Proposed conventions awaiting ADR-0003 review:
+Proposed conventions awaiting [ADR-0003](../../ADR-0003-modular-extensible-architecture.md) review:
 
 - Typed Resources describe authored definitions; reusable scenes/components supply
   behavior. Keep content data separate from player-specific runtime state.
