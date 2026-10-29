@@ -1,0 +1,26 @@
+name: Handoff check
+on:
+  push:
+    branches: [feature/m0-foundation]
+  pull_request:
+    branches: [feature/m0-foundation]
+permissions:
+  contents: read
+jobs:
+  handoff:
+    name: Handoff notes
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+      - name: Check handoff notes
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE="${{ github.event.pull_request.base.sha }}"
+          else
+            BASE="${{ github.event.before }}"
+          fi
+          python3 tools/check_handoff.py --base "$BASE" --head "${{ github.sha }}"

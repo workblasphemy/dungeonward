@@ -1,5 +1,7 @@
 # Dungeonward AI team v0.2 — token-optimized
 
+**Handoff:** Before any task, read [docs/HANDOFF_PROTOCOL.md](docs/HANDOFF_PROTOCOL.md) (`handoffs/LATEST.md`, `handoffs/STATUS.md`, `handoffs/DECISIONS_NEEDED.md`).
+
 **Quick start:** Give an agent `00_SHARED_RULES.md`, its one role file (`01_CODEX.md` through `07_DEEPSEEK.md`), and a filled `TASK_HANDOFF.md`. Add only relevant **excerpts** from the repository-root specifications (`MASTER_BLUEPRINT.md`, `FOUNDATION_IMPLEMENTATION_SPEC.md`, `FEATURE_INDEX.md`, the ADR files, and the affected feature spec) and source files. Read the sections the task needs, **not** every specification in full.
 
 | Agent | Role file | Default docs to fetch *only when needed* |
