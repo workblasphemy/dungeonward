@@ -38,6 +38,25 @@ Explicit dependencies add small amounts of wiring but keep ownership and lifecyc
 
 The project owner approved a 60-second inactivity deadline for `CHARACTER_SELECTED` slots. Successful selection begins a new 60-second deadline; only validated progress toward readiness may refresh it. Expiry releases the seat and its character lock. The pending-join timeout does not apply to `ACTIVE` players. `READY` and `ACTIVE` transitions, trusted progress validation, and their tests remain M0 implementation work; this policy does not authorize M1 or gameplay.
 
+## M0 verification and retry decisions (2026-10-28)
+
+The M0 request authorizer retains a successful reservation response, including the
+opaque token, in a private, in-memory replay cache for at most 60 seconds, with
+a limit of 128 cached requests per peer. This preserves exact retries when the
+original response was lost. The cache must not be logged, serialized, included
+in snapshots, or exposed over transport. Cache entries expire on subsequent
+requests or host sweeps and are cleared for a disconnected peer. A cache entry
+may remain in memory past its deadline until the next sweep. No persistent
+credential storage is authorized.
+
+Pending READY seats share the 60-second inactivity policy with selected seats.
+A validated READY transition starts a fresh deadline. READY is not proof of
+world baseline or spawn completion; ACTIVE currently represents only an M0
+state transition. Before transport/world integration, the host must implement
+a readiness barrier and may refresh the READY deadline only on validated
+progress, not arbitrary client heartbeats. ACTIVE is exempt from the pending
+join timeout. M0 does not implement spawning or ENet.
+
 ## Review and implementation gates
 
 The project owner approved these contracts with the canonical documentation layout clarification on 2026-10-28. Add identity DTOs and an in-memory registry only after the initial harness has actual Linux and Windows evidence, as required by Foundation v0.5 §14. Transport, controllers, persistence and gameplay remain later milestones. Any accepted change to existing contracts requires concurrent blueprint and affected-spec updates under ADR-0001. This proposal does not supersede it.
