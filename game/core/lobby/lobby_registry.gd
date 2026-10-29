@@ -16,6 +16,9 @@ func _result(ok: bool, code: String, extra: Dictionary = {}) -> Dictionary:
     result.merge(extra)
     return result
 
+func _token_hash(token: String) -> String:
+    return token.sha256_text()
+
 func _pair(peer_id: int, local_slot_id: int) -> String:
     return "%d:%d" % [peer_id, local_slot_id]
 
@@ -31,13 +34,14 @@ func reserve(peer_id: int, local_slot_id: int, protocol_version: int, now_ms: in
         return _result(false, "SLOT_OCCUPIED")
     if _slots.size() >= CAPACITY:
         return _result(false, "LOBBY_FULL")
+    var digest := _token_hash(token)
     for existing in _slots.values():
-        if existing["token"] == token:
+        if existing["token_hash"] == digest:
             return _result(false, "TOKEN_REUSED")
     var id := _next_id
     _next_id += 1
     _revision += 1
-    _slots[id] = {"peer_id": peer_id, "local_slot_id": local_slot_id, "token": token,
+    _slots[id] = {"peer_id": peer_id, "local_slot_id": local_slot_id, "token_hash": digest,
         "expires_at_ms": now_ms + TTL_MS, "state": "RESERVED", "character_id": "",
         "owner_profile_id": "", "revision": _revision}
     _pairs[key] = id
@@ -48,7 +52,7 @@ func select_character(sender_peer_id: int, id: int, token: String, owner_profile
     if not _slots.has(id):
         return _result(false, "NOT_FOUND")
     var slot: Dictionary = _slots[id]
-    if slot["peer_id"] != sender_peer_id or slot["token"] != token:
+    if slot["peer_id"] != sender_peer_id or slot["token_hash"] != _token_hash(token):
         return _result(false, "UNAUTHORIZED")
     if slot["state"] != "RESERVED":
         return _result(false, "INVALID_STATE")
