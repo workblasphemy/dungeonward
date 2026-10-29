@@ -74,6 +74,33 @@ func select_character(sender_peer_id: int, id: int, token: String, owner_profile
     _characters[character_id] = id
     return _result(true, "OK")
 
+func advance_state(sender_peer_id: int, id: int, token: String, expected_revision: int,
+        next_state: String, now_ms: int) -> Dictionary:
+    if not _slots.has(id):
+        return _result(false, "NOT_FOUND")
+    var slot: Dictionary = _slots[id]
+    if slot["peer_id"] != sender_peer_id or slot["token_hash"] != _token_hash(token):
+        return _result(false, "UNAUTHORIZED")
+    if slot["revision"] != expected_revision:
+        return _result(false, "STALE_REVISION")
+    if slot["state"] == "CHARACTER_SELECTED" and next_state == "READY":
+        if now_ms >= slot["expires_at_ms"]:
+            _release(id)
+            return _result(false, "EXPIRED")
+    elif slot["state"] == "READY" and next_state == "ACTIVE":
+        pass
+    else:
+        return _result(false, "INVALID_TRANSITION")
+    _revision += 1
+    slot["state"] = next_state
+    slot["revision"] = _revision
+    return _result(true, "OK")
+
+func slot_revision(id: int) -> int:
+    if not _slots.has(id):
+        return -1
+    return _slots[id]["revision"]
+
 func release(sender_peer_id: int, id: int, token: String) -> Dictionary:
     if not _slots.has(id):
         return _result(true, "OK")
