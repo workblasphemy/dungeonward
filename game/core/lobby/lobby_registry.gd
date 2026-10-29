@@ -105,7 +105,7 @@ func release(sender_peer_id: int, id: int, token: String) -> Dictionary:
     if not _slots.has(id):
         return _result(true, "OK")
     var slot: Dictionary = _slots[id]
-    if slot["peer_id"] != sender_peer_id or slot["token"] != token:
+    if slot["peer_id"] != sender_peer_id or slot["token_hash"] != _token_hash(token):
         return _result(true, "OK")
     _release(id)
     return _result(true, "OK")
@@ -119,7 +119,7 @@ func refresh_pending(sender_peer_id: int, id: int, token: String, now_ms: int) -
     if not _slots.has(id):
         return _result(false, "NOT_FOUND")
     var slot: Dictionary = _slots[id]
-    if slot["peer_id"] != sender_peer_id or slot["token"] != token:
+    if slot["peer_id"] != sender_peer_id or slot["token_hash"] != _token_hash(token):
         return _result(false, "UNAUTHORIZED")
     if slot["state"] != "CHARACTER_SELECTED":
         return _result(false, "INVALID_STATE")
