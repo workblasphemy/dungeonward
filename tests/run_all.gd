@@ -75,6 +75,8 @@ func _initialize() -> void:
         check(lobby.snapshot() == before_private, "foreign release does not mutate state")
         check(lobby.release(4, private_seat["session_player_id"], "token-private")["ok"],
             "owner can release seat")
+        check(lobby.snapshot().size() == before_private.size() - 1,
+            "authorized release actually removes its seat")
         var pending: Dictionary = lobby.reserve(5, 0, 1, 0, "token-pending")
         check(lobby.select_character(5, pending["session_player_id"], "token-pending",
             "profile-p", "character-p", 1, 0, 100)["ok"], "selection begins inactivity deadline")
@@ -157,6 +159,32 @@ func _initialize() -> void:
         check(auth.registry_snapshot().size() == 1, "ACTIVE slot exempt from join timeout")
         auth.host_disconnect(1)
         check(auth.registry_snapshot().is_empty(), "host disconnect cleans up active seat")
+        var ready_auth: Variant = auth_script.new()
+        var ready_slot: Dictionary = ready_auth.request_slot(7,
+            {"request_id": "ready-r", "local_slot_id": 0, "protocol_version": 1}, 0)
+        check(ready_auth.select_character(7,
+            {"request_id": "ready-s", "session_player_id": ready_slot["session_player_id"],
+             "reservation_token": ready_slot["reservation_token"],
+             "owner_profile_id": "owner-ready", "character_id": "character-ready",
+             "save_schema": 1, "save_revision": 0}, 0)["ok"], "READY test selection succeeds")
+        check(ready_auth.advance_state(7,
+            {"request_id": "ready-a", "session_player_id": ready_slot["session_player_id"],
+             "reservation_token": ready_slot["reservation_token"],
+             "expected_revision": ready_auth.registry_snapshot()[0]["revision"],
+             "next_state": "READY"}, 100)["ok"], "READY starts a fresh pending deadline")
+        ready_auth.host_expire(60099)
+        check(ready_auth.registry_snapshot().size() == 1, "READY survives before deadline")
+        ready_auth.host_expire(60100)
+        check(ready_auth.registry_snapshot().is_empty(), "abandoned READY seat expires")
+        var retry_auth: Variant = auth_script.new()
+        var retry_request: Dictionary = {"request_id": "retry-r", "local_slot_id": 0,
+            "protocol_version": 1}
+        var retry_first: Dictionary = retry_auth.request_slot(8, retry_request, 0)
+        check(retry_auth.request_slot(8, retry_request, 59999) == retry_first,
+            "reservation replay preserves original token within retry window")
+        retry_auth.host_expire(60000)
+        check(retry_auth.request_slot(8, retry_request, 60000)["ok"],
+            "expired replay entries cannot permanently block requests")
     if "--self-test-failure" in OS.get_cmdline_user_args():
         check(false, "intentional runner failure probe")
     print("RESULT: %d checks, %d failures" % [checks, failures])
