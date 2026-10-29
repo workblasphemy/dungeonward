@@ -88,10 +88,14 @@ func advance_state(sender_peer_id: int, id: int, token: String, expected_revisio
             _release(id)
             return _result(false, "EXPIRED")
     elif slot["state"] == "READY" and next_state == "ACTIVE":
-        pass
+        if now_ms >= slot["expires_at_ms"]:
+            _release(id)
+            return _result(false, "EXPIRED")
     else:
         return _result(false, "INVALID_TRANSITION")
     _revision += 1
+    if next_state == "READY":
+        slot["expires_at_ms"] = now_ms + TTL_MS
     slot["state"] = next_state
     slot["revision"] = _revision
     return _result(true, "OK")
@@ -134,7 +138,7 @@ func refresh_pending(sender_peer_id: int, id: int, token: String, now_ms: int) -
 
 func expire(now_ms: int) -> void:
     for id in _slots.keys():
-        if _slots[id]["state"] in ["RESERVED", "CHARACTER_SELECTED"] and now_ms >= _slots[id]["expires_at_ms"]:
+        if _slots[id]["state"] in ["RESERVED", "CHARACTER_SELECTED", "READY"] and now_ms >= _slots[id]["expires_at_ms"]:
             _release(id)
 
 func _release(id: int) -> void:
