@@ -65,16 +65,17 @@ func select_character(sender_peer_id: int, id: int, token: String, owner_profile
     slot["owner_profile_id"] = owner_profile_id
     slot["character_id"] = character_id
     slot["state"] = "CHARACTER_SELECTED"
+    slot["expires_at_ms"] = now_ms + TTL_MS
     slot["revision"] = _revision
     _characters[character_id] = id
     return _result(true, "OK")
 
 func release(sender_peer_id: int, id: int, token: String) -> Dictionary:
     if not _slots.has(id):
-        return _result(true, "ALREADY_RELEASED")
+        return _result(true, "OK")
     var slot: Dictionary = _slots[id]
     if slot["peer_id"] != sender_peer_id or slot["token"] != token:
-        return _result(false, "UNAUTHORIZED")
+        return _result(true, "OK")
     _release(id)
     return _result(true, "OK")
 
@@ -83,9 +84,26 @@ func release_peer(peer_id: int) -> void:
         if _slots[id]["peer_id"] == peer_id:
             _release(id)
 
+func refresh_pending(sender_peer_id: int, id: int, token: String, now_ms: int) -> Dictionary:
+    if not _slots.has(id):
+        return _result(false, "NOT_FOUND")
+    var slot: Dictionary = _slots[id]
+    if slot["peer_id"] != sender_peer_id or slot["token"] != token:
+        return _result(false, "UNAUTHORIZED")
+    if slot["state"] != "CHARACTER_SELECTED":
+        return _result(false, "INVALID_STATE")
+    if now_ms >= slot["expires_at_ms"]:
+        _release(id)
+        return _result(false, "EXPIRED")
+    # Only trusted, validated join progress may invoke this method.
+    slot["expires_at_ms"] = now_ms + TTL_MS
+    _revision += 1
+    slot["revision"] = _revision
+    return _result(true, "OK")
+
 func expire(now_ms: int) -> void:
     for id in _slots.keys():
-        if _slots[id]["state"] == "RESERVED" and now_ms >= _slots[id]["expires_at_ms"]:
+        if _slots[id]["state"] in ["RESERVED", "CHARACTER_SELECTED"] and now_ms >= _slots[id]["expires_at_ms"]:
             _release(id)
 
 func _release(id: int) -> void:
