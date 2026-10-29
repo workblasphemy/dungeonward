@@ -2,7 +2,7 @@
 
 Every model on this team reads the latest handoff before starting and leaves a new one when it stops. The user prompts one model at a time. The model finds the note here; the user does not have to point at the file.
 
-Branch: `feature/m0-foundation`. Codex integrates. Do not merge to `main` or push any other branch unless the owner approves that push.
+The working branch is the `Working branch:` line in [handoffs/LATEST.md](../handoffs/LATEST.md). It is `feature/m0-foundation` until an owner-approved note changes that line. Codex integrates. Do not merge to `main` or push any other branch unless the owner approves that push.
 
 Living files, and the only ones a reader must open:
 
@@ -24,14 +24,14 @@ If the user says any of these, do this protocol before other work. Do not search
 
 ## Before you edit
 
-1. Stay on `feature/m0-foundation`. Run `git rev-parse HEAD`.
+1. Check out the working branch named in LATEST. Run `git pull --rebase`, then `git rev-parse HEAD`. See Parallel work before you add a note.
 2. Read [handoffs/LATEST.md](../handoffs/LATEST.md), the note it links, [handoffs/STATUS.md](../handoffs/STATUS.md), and [handoffs/DECISIONS_NEEDED.md](../handoffs/DECISIONS_NEEDED.md). If LATEST names a note newer than the one you last saw, read that note.
 3. Read its `Verdict` and `Build/commit`. Compare HEAD with `Build/commit`. HEAD is still that build when it matches, or when every commit after `Build/commit` only touches `handoffs/` (notes, LATEST, STATUS, DECISIONS, logs, archive). If a later commit touches any other path, read those commits and any newer notes before you act.
 4. Tell the owner the latest verdict, `Build/commit`, and your plan. Then continue. Do not wait for confirmation unless the owner says stop.
 5. Act on the verdict:
    - **IMPLEMENTED:** the next actor is whoever `Next owner` names (normally `deepseek` tests new work; `codex` reviews a passing test-run). If that slug is you, do `Next action`. If it is not, say so and do not take the task.
    - **CHANGES_REQUESTED:** fix the listed items. Do not widen the task.
-   - **APPROVED:** start `Next action`. Only `codex` may set this verdict, and only with the proof below. If the proof is missing, flag that and do not treat the note as approval.
+   - **APPROVED:** start `Next action`. Only filename slugs `codex` and `owner` may set this verdict, and only with the proof below. Any model may write an `owner` note when the owner explicitly instructs it. If the proof is missing, flag that and do not treat the note as approval.
    - **BLOCKED:** do not work around the block. Tell the owner what is needed.
    - **IN_PROGRESS:** if you are `Next owner`, continue that task. Otherwise do not start a second copy.
 6. Read [00_SHARED_RULES.md](../00_SHARED_RULES.md), the ADRs the task touches ([ADR-0001](../ADR-0001-foundational-architecture.md) ARCH-01 through ARCH-08, [ADR-0002](../ADR-0002-gameplay-design-v0.1.md) GAME-01 through GAME-08, [ADR-0003](../ADR-0003-modular-extensible-architecture.md)), and any specs the note names. Also read your role file: [01_CODEX.md](../01_CODEX.md), [02_GEMINI.md](../02_GEMINI.md), [03_CLAUDE_OPUS.md](../03_CLAUDE_OPUS.md), [04_KIMI_K3.md](../04_KIMI_K3.md), [05_GROK.md](../05_GROK.md), [06_GROQ.md](../06_GROQ.md), or [07_DEEPSEEK.md](../07_DEEPSEEK.md).
@@ -51,6 +51,20 @@ Do this when you finish, when you are blocked, or when you are out of tokens.
 6. Keep one STATUS row per feature or task ID. Update rows you judged. Do not delete rows.
 
 A BLOCKED note must add an OPEN row to [handoffs/DECISIONS_NEEDED.md](../handoffs/DECISIONS_NEEDED.md).
+
+## Parallel work
+
+Do this before writing a note, and again if the push is rejected.
+
+1. `git pull --rebase` the working branch named in LATEST.
+2. Take the next seq from that fresh tree: one higher than the highest `NNNN` under `handoffs/` and `handoffs/archive/**`. If LATEST `Next seq` is already a filename, renumber.
+3. If `git push` is not a fast-forward, `git pull --rebase` again. Resolve handoff conflicts this way, and no other way: LATEST is the highest seq (status block, link, gist, `Next seq`, and `Working branch`). STATUS keeps every feature/task ID; when both sides edited the same ID, keep the row from the higher seq. Renumber your note if your seq was taken. Retry the push. Do not force-push.
+
+Changing `Working branch:` is allowed only in a note the owner approved. That note updates the line. Other docs follow the line instead of naming a branch of their own.
+
+## Merges
+
+A merge commit has more than one parent. The checker does not treat that commit as "code without a note", and it does not fail it for mixing a note with paths outside `handoffs/`. A push that contains a merge must also contain a new note after the last merge in that push. The note's `Type` is `integration`. One such note covers that push.
 
 ## Status block
 
@@ -72,7 +86,7 @@ Next action: One line, done by the Next owner slug.
 - `Reviewed note` is a sequence number (`0003`) or `none`. It is not a filename.
 - `Next owner` is one slug: `codex`, `gemini`, `claude`, `kimi`, `groq`, `deepseek`, `grok`, or `owner`. Do not write a role title.
 - `Verdict` is `APPROVED`, `IMPLEMENTED`, `CHANGES_REQUESTED`, `BLOCKED`, or `IN_PROGRESS`.
-- `Type` is `review`, `feature`, `fix`, `test-run`, or `docs`.
+- `Type` is `review`, `feature`, `fix`, `test-run`, `docs`, or `integration`.
 
 ## Note body
 
@@ -111,19 +125,21 @@ Keep the note under about 150 lines. Link to files. A log longer than 40 lines g
 
 | Verdict | Meaning | Next actor |
 |---|---|---|
-| APPROVED | `codex` checked one commit and it is safe to build on. Every check has proof. | Whoever `Next action` addresses. |
+| APPROVED | `codex` or `owner` checked one commit and it is safe to build on. Every check has proof. An `owner` note may be written by any model on the owner's explicit instruction; the filename slug is `owner`. | Whoever `Next action` addresses. |
 | IMPLEMENTED | A feature, fix, docs change, or passing test-run has landed and is waiting. | Whoever `Next owner` names (normally `deepseek` tests new work; `codex` reviews a passing test-run). |
 | CHANGES_REQUESTED | Review, or a test-run, found problems. The note lists them. | `Next owner` fixes those items. |
 | BLOCKED | Work cannot continue. Say what is needed, usually an owner decision. Add a DECISIONS row. Do not work around it. | `owner` |
 | IN_PROGRESS | You stopped before the task was done. | `Next owner` continues it. |
 
-Hard rule: Verdict APPROVED is allowed only when the filename slug is `codex`, and only when each claimed check records the exact command, OS/environment, Godot version, and log (pasted if it is 40 lines or fewer, otherwise a committed `handoffs/logs/NNNN_*.log` path). If any of that is missing, use IMPLEMENTED or CHANGES_REQUESTED. `deepseek` test-run notes use IMPLEMENTED when every test that was run passed, or CHANGES_REQUESTED when any failed. `deepseek` never sets APPROVED.
+Hard rule: Verdict APPROVED is allowed only when the filename slug is `codex` or `owner`, and only when each claimed check records the exact command, OS/environment, Godot version, and log (pasted if it is 40 lines or fewer, otherwise a committed `handoffs/logs/NNNN_*.log` path). If any of that is missing, use IMPLEMENTED or CHANGES_REQUESTED. `deepseek` test-run notes use IMPLEMENTED when every test that was run passed, or CHANGES_REQUESTED when any failed. `deepseek` never sets APPROVED.
 
 ## Tests
 
 `deepseek` in a plain chat cannot run Godot. Default flow: the owner runs `tools/test.ps1` on Windows or `tools/test.sh` on Linux and pastes the log. `deepseek`, or whichever model is writing the note, turns that into a `test-run` note. A model that really has the machine (a coding CLI or this repo's workspace) may run the tests itself. The note says who ran the command and where.
 
 Logs longer than 40 lines are saved by the owner, when the owner ran the tests, to `handoffs/logs/NNNN_*.log`. The note links to that path. A model with the repo saves that file itself in the note commit.
+
+`tools/test.sh` and `tools/test.ps1` print a provenance header before the rest of their output: `commit` (`git rev-parse HEAD`), `branch`, `dirty` (`clean`, `dirty`, or `unknown` from `git status --porcelain`), `os`, and `godot`. If git or the engine is missing, that field is `unknown` and the script continues into its existing checks. A `test-run` note's `Build/commit` must be the `commit` hash printed in that log.
 
 ## Decisions
 
@@ -152,7 +168,7 @@ If the owner ran the tests, the owner saves logs longer than 40 lines to `handof
 One-time setup, for a chat that does not auto-read the repo. Paste once per session:
 
 ```text
-Before doing anything, open the dungeonward repo on branch feature/m0-foundation, read docs/HANDOFF_PROTOCOL.md, then handoffs/LATEST.md, handoffs/STATUS.md, and handoffs/DECISIONS_NEEDED.md. Tell me the latest verdict, Build/commit, and your plan, then continue unless I say stop. Follow the protocol and leave a handoff note with a status block when you finish.
+Before doing anything, open the dungeonward repo on the working branch named in handoffs/LATEST.md (currently feature/m0-foundation), read docs/HANDOFF_PROTOCOL.md, then handoffs/LATEST.md, handoffs/STATUS.md, and handoffs/DECISIONS_NEEDED.md. Tell me the latest verdict, Build/commit, and your plan, then continue unless I say stop. Follow the protocol and leave a handoff note with a status block when you finish.
 ```
 
 Short trigger, after that session can see the repo (or after [AGENTS.md](../AGENTS.md) was read):
@@ -163,13 +179,15 @@ Check for the new .MD and work.
 
 ## CI
 
-[tools/check_handoff.py](../tools/check_handoff.py) is stdlib only. [handoff-check.yml](../.github/workflows/handoff-check.yml) runs it on push and pull_request to `feature/m0-foundation`. It does not change the foundation test workflow.
+[tools/check_handoff.py](../tools/check_handoff.py) is stdlib only. [handoff-check.yml](../.github/workflows/handoff-check.yml) runs it on push and pull_request for every branch, and skips when `handoffs/LATEST.md` is absent. It does not change the foundation test workflow.
 
 On the push range it fails when:
 
 - a commit adds `handoffs/NNNN_<slug>_<task>.md` and also changes a path outside `handoffs/`
 - the range changes a path outside `handoffs/` and `docs/` and does not add a new note
-- a numbered note is missing a status field, uses a bad Verdict or Type, uses a slug outside the fixed list, sets APPROVED with a slug other than `codex`, or sets `Reviewed note` to something other than `none` or an existing seq
+- a numbered note is missing a status field, uses a bad Verdict or Type, uses a slug outside the fixed list, sets APPROVED with a slug other than `codex` or `owner`, or sets `Reviewed note` to something other than `none` or an existing seq
+- the push contains a merge commit and no later note with Type `integration`
+- LATEST has no `Working branch:` line
 - `Build/commit` is not a hash in the history of HEAD
 - sequence numbers are duplicated under `handoffs/` or `handoffs/archive/**`
 - LATEST does not name the highest note, disagree with that note's status block, or carry the right `Next seq`
@@ -182,11 +200,11 @@ This workflow reports failures. It does not block the push unless the owner turn
 
 | Slug | File | Work |
 |---|---|---|
-| `codex` | [01_CODEX.md](../01_CODEX.md) | Lead and integrator. Only slug that may set APPROVED. Archives notes. May clear a stale claim. |
+| `codex` | [01_CODEX.md](../01_CODEX.md) | Lead and integrator. May set APPROVED. Archives notes. May clear a stale claim. |
 | `gemini` | [02_GEMINI.md](../02_GEMINI.md) | Networking |
 | `claude` | [03_CLAUDE_OPUS.md](../03_CLAUDE_OPUS.md) | Blender and animation |
 | `kimi` | [04_KIMI_K3.md](../04_KIMI_K3.md) | UI |
 | `grok` | [05_GROK.md](../05_GROK.md) | Gameplay prototypes |
 | `groq` | [06_GROQ.md](../06_GROQ.md) | Boilerplate |
 | `deepseek` | [07_DEEPSEEK.md](../07_DEEPSEEK.md) | Test execution. Test-run notes are IMPLEMENTED or CHANGES_REQUESTED, never APPROVED. |
-| `owner` | — | The user. Runs local Godot tests, commits no-repo blocks, decides OPEN rows, clears stale claims. |
+| `owner` | — | The user. May set APPROVED in a note with filename slug `owner` (any model may write that note when the owner explicitly instructs it). Runs local Godot tests, commits no-repo blocks, decides OPEN rows, clears stale claims, and is the only one who approves a working-branch change. |

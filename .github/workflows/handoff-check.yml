@@ -1,9 +1,7 @@
 name: Handoff check
 on:
   push:
-    branches: [feature/m0-foundation]
   pull_request:
-    branches: [feature/m0-foundation]
 permissions:
   contents: read
 jobs:
@@ -18,6 +16,10 @@ jobs:
       - name: Check handoff notes
         shell: bash
         run: |
+          if [ ! -f handoffs/LATEST.md ]; then
+            echo "INFO: handoffs/LATEST.md is absent; handoff check skipped"
+            exit 0
+          fi
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             BASE="${{ github.event.pull_request.base.sha }}"
           else

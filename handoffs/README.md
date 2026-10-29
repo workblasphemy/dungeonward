@@ -8,4 +8,4 @@ Do not edit or delete a note. Moving it into `archive/<milestone>/` at a milesto
 
 [LATEST.md](LATEST.md), [STATUS.md](STATUS.md), and [DECISIONS_NEEDED.md](DECISIONS_NEEDED.md) are the living files. Logs longer than 40 lines go in [logs/](logs/README.md). Copy [_TEMPLATE.md](_TEMPLATE.md) for a new note.
 
-The code commit lands first. The note, LATEST, and STATUS land in the next commit and that commit stays inside this folder. Push both commits together.
+The code commit lands first. The note, LATEST, and STATUS land in the next commit and that commit stays inside this folder. Push both commits together. The working branch is the `Working branch:` line in LATEST.md. Before writing a note, `git pull --rebase` as the protocol's Parallel work section describes.

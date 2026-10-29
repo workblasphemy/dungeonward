@@ -10,6 +10,8 @@ Next owner: <one slug: codex, gemini, claude, kimi, groq, deepseek, grok, owner>
 Next action:
 ```
 
+`Type` is `review`, `feature`, `fix`, `test-run`, `docs`, or `integration`. Verdict APPROVED is only for filename slugs `codex` and `owner`, and it needs Proof.
+
 # Agent task handoff (fill only applicable fields)
 **Agent / branch:**
 **Goal:**

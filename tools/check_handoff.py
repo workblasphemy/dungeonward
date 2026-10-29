@@ -38,7 +38,8 @@ VERDICTS = {
     "BLOCKED",
     "IN_PROGRESS",
 }
-TYPES = {"review", "feature", "fix", "test-run", "docs"}
+TYPES = {"review", "feature", "fix", "test-run", "docs", "integration"}
+APPROVERS = {"codex", "owner"}
 STATUS_KEYS = [
     "Seq",
     "Date",
@@ -271,10 +272,10 @@ def check_notes(repo: Path, head: str, report: Report) -> dict[str, dict[str, st
                 f"{relative}: Reviewed note must be a seq such as 0003, or none "
                 f"(got {reviewed!r})"
             )
-        if fields["Verdict"] == "APPROVED" and slug != "codex":
+        if fields["Verdict"] == "APPROVED" and slug not in APPROVERS:
             report.fail(
                 f"{relative}: Verdict APPROVED is only allowed when the filename "
-                f"slug is codex (got {slug})"
+                f"slug is codex or owner (got {slug})"
             )
         if fields["Verdict"] == "APPROVED":
             proof_error = has_proof(text)
@@ -359,6 +360,11 @@ def check_latest(repo: Path, parsed: dict[str, dict[str, str]], report: Report) 
         )
     else:
         report.ok(f"LATEST.md Next seq is {expected_next}")
+    branch = re.search(r"(?m)^Working branch:\s*(\S+)\s*$", text)
+    if not branch:
+        report.fail("LATEST.md is missing a `Working branch:` line")
+    else:
+        report.ok(f"LATEST.md working branch is {branch.group(1)}")
     latest_fields, error = parse_status(text, at_start=False)
     if error or latest_fields is None:
         report.fail(f"LATEST.md status block: {error}")
@@ -420,16 +426,75 @@ def check_status_table(repo: Path, report: Report) -> None:
         report.ok(f"STATUS.md slugs and claims ({rows} rows)")
 
 
+def parent_count(repo: Path, sha: str) -> int:
+    line = git(repo, "rev-list", "--parents", "-n", "1", sha).stdout.strip().split()
+    return max(0, len(line) - 1)
+
+
+def is_merge(repo: Path, sha: str) -> bool:
+    return parent_count(repo, sha) > 1
+
+
+def note_type_in_tree(repo: Path, sha: str, path: str) -> str | None:
+    shown = git(repo, "show", f"{sha}:{path}", check=False)
+    if shown.returncode != 0:
+        return None
+    fields, error = parse_status(shown.stdout, at_start=True)
+    if error or fields is None:
+        return None
+    return fields.get("Type")
+
+
+def check_merges(repo: Path, base: str, head: str, report: Report) -> None:
+    first = git(repo, "rev-list", "--reverse", "--first-parent", f"{base}..{head}").stdout.splitlines()
+    merges = [sha for sha in first if is_merge(repo, sha)]
+    if not merges:
+        report.ok("no merge commit in the push")
+        return
+    last_merge = merges[-1]
+    after = first[first.index(last_merge) + 1 :]
+    added: list[tuple[str, str]] = []
+    for sha in after:
+        if is_merge(repo, sha):
+            continue
+        for status, path in commit_changes(repo, sha):
+            if added_note(status, path):
+                added.append((sha, path))
+    worktree_notes = [
+        path for status, path in worktree_changes(repo) if added_note(status, path)
+    ]
+    integration = False
+    for sha, path in added:
+        if note_type_in_tree(repo, sha, path) == "integration":
+            integration = True
+    if worktree_notes:
+        for path in worktree_notes:
+            file_path = repo / path
+            if not file_path.is_file():
+                continue
+            fields, error = parse_status(file_path.read_text(encoding="utf-8"), at_start=True)
+            if not error and fields and fields.get("Type") == "integration":
+                integration = True
+    if not integration:
+        report.fail(
+            f"push contains merge commit {last_merge} but no later note with "
+            "Type integration. Add that note after the merge, in the same push."
+        )
+    else:
+        report.ok("merge commit is followed by a Type integration note")
+
+
 def check_range(repo: Path, base: str, head: str, report: Report) -> None:
     if re.fullmatch(r"0{40}", base or ""):
         report.info("range check skipped because the push base is an all-zero sha")
         return
     commits = git(repo, "rev-list", "--reverse", f"{base}..{head}")
     range_rows: list[tuple[str, str]] = []
-    if commits.stdout.strip():
-        range_rows.extend(parse_name_status(git(repo, "diff", "--name-status", base, head).stdout))
     for sha in commits.stdout.splitlines():
+        if is_merge(repo, sha):
+            continue
         rows = commit_changes(repo, sha)
+        range_rows.extend(rows)
         outside = [path for _status, path in rows if not path.startswith("handoffs/")]
         if any(added_note(status, path) for status, path in rows) and outside:
             report.fail(
@@ -474,6 +539,7 @@ def check_range(repo: Path, base: str, head: str, report: Report) -> None:
         report.ok("changes outside handoffs/ and docs/ are covered by a new handoff note")
     else:
         report.ok("no changes outside handoffs/ and docs/")
+    check_merges(repo, base, head, report)
 
 
 def evaluate(repo: Path, base: str, head: str) -> Report:
@@ -499,14 +565,14 @@ def repo_root() -> Path:
     return Path(result.stdout.strip())
 
 
-def write_note(path: Path, seq: str, slug: str, build: str, verdict: str = "IMPLEMENTED", owner: str = "codex", reviewed: str = "none", extra: str = "") -> None:
+def write_note(path: Path, seq: str, slug: str, build: str, verdict: str = "IMPLEMENTED", owner: str = "codex", reviewed: str = "none", extra: str = "", note_type: str = "docs") -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
         "```status\n"
         f"Seq: {seq}\n"
         "Date: 2026-10-29 13:57 UTC\n"
         f"Verdict: {verdict}\n"
-        "Type: docs\n"
+        f"Type: {note_type}\n"
         f"Build/commit: {build}\n"
         "Feature/task IDs: sample\n"
         f"Reviewed note: {reviewed}\n"
@@ -519,7 +585,7 @@ def write_note(path: Path, seq: str, slug: str, build: str, verdict: str = "IMPL
     )
 
 
-def write_latest(repo: Path, seq: str, slug: str, task: str, build: str, verdict: str = "IMPLEMENTED") -> None:
+def write_latest(repo: Path, seq: str, slug: str, task: str, build: str, verdict: str = "IMPLEMENTED", note_type: str = "docs", next_owner: str = "codex") -> None:
     name = f"{seq}_{slug}_{task}.md"
     text = (
         "# Latest handoff\n\n"
@@ -527,15 +593,16 @@ def write_latest(repo: Path, seq: str, slug: str, task: str, build: str, verdict
         f"Seq: {seq}\n"
         "Date: 2026-10-29 13:57 UTC\n"
         f"Verdict: {verdict}\n"
-        "Type: docs\n"
+        f"Type: {note_type}\n"
         f"Build/commit: {build}\n"
         "Feature/task IDs: sample\n"
-        "Reviewed note: none\n"
-        "Next owner: codex\n"
+        f"Reviewed note: none\n"
+        f"Next owner: {next_owner}\n"
         "Next action: Continue the sample task.\n"
         "```\n\n"
         f"Note: [{name}]({name})\n\n"
-        f"Next seq: {int(seq) + 1:04d}\n"
+        f"Next seq: {int(seq) + 1:04d}\n\n"
+        "Working branch: feature/m0-foundation\n"
     )
     (repo / "handoffs" / "LATEST.md").write_text(text, encoding="utf-8")
 
@@ -652,7 +719,7 @@ def run_self_test() -> int:
         write_status(repo, code)
         head = commit_all(repo, "bad approved")
         problems.extend(
-            expect(evaluate(repo, base, head), False, "only allowed when the filename slug is codex", "grok approved")
+            expect(evaluate(repo, base, head), False, "slug is codex or owner", "grok approved")
         )
 
     with tempfile.TemporaryDirectory() as tmp:
@@ -747,6 +814,80 @@ def run_self_test() -> int:
             problems.append(f"long note: expected warning only\n{text}")
         if "WARNING:" not in text or "150" not in text:
             problems.append(f"long note: missing warning\n{text}")
+
+    with tempfile.TemporaryDirectory() as tmp:
+        repo = Path(tmp)
+        git(repo, "init", "-b", "feature/m0-foundation")
+        (repo / "README.md").write_text("base\n", encoding="utf-8")
+        base = commit_all(repo, "base")
+        proof = (
+            "## Proof\n"
+            "- Command: true\n"
+            "- OS/environment: Linux test\n"
+            "- Godot version: 4.7.2.stable\n"
+            "- Log: ok\n"
+        )
+        write_note(
+            repo / "handoffs" / "0001_owner_sample.md",
+            "0001",
+            "owner",
+            base,
+            verdict="APPROVED",
+            extra=proof,
+        )
+        write_latest(repo, "0001", "owner", "sample", base, verdict="APPROVED")
+        write_status(repo, base)
+        head = commit_all(repo, "owner approved")
+        problems.extend(expect(evaluate(repo, base, head), True, "working branch", "owner approved"))
+
+    with tempfile.TemporaryDirectory() as tmp:
+        repo = Path(tmp)
+        git(repo, "init", "-b", "feature/m0-foundation")
+        (repo / "README.md").write_text("base\n", encoding="utf-8")
+        base = commit_all(repo, "base")
+        write_note(repo / "handoffs" / "0001_grok_sample.md", "0001", "grok", base)
+        write_latest(repo, "0001", "grok", "sample", base)
+        write_status(repo, base)
+        noted = commit_all(repo, "note")
+        git(repo, "checkout", "-b", "side")
+        (repo / "README.md").write_text("side\n", encoding="utf-8")
+        side_code = commit_all(repo, "side code")
+        write_note(repo / "handoffs" / "0002_grok_side.md", "0002", "grok", side_code)
+        commit_all(repo, "side note")
+        git(repo, "checkout", "feature/m0-foundation")
+        git(
+            repo,
+            "-c",
+            "user.email=handoff-test@example.com",
+            "-c",
+            "user.name=Handoff Test",
+            "merge",
+            "--no-ff",
+            "side",
+            "-m",
+            "merge side",
+        )
+        merged = git(repo, "rev-parse", "HEAD").stdout.strip()
+        problems.extend(
+            expect(evaluate(repo, noted, merged), False, "Type integration", "merge without integration note")
+        )
+        write_note(
+            repo / "handoffs" / "0003_codex_integrate.md",
+            "0003",
+            "codex",
+            merged,
+            note_type="integration",
+        )
+        write_latest(repo, "0003", "codex", "integrate", merged, note_type="integration")
+        integrated = commit_all(repo, "integration note")
+        problems.extend(
+            expect(
+                evaluate(repo, noted, integrated),
+                True,
+                "Type integration note",
+                "merge with integration note",
+            )
+        )
 
     if problems:
         sys.stderr.write("\n\n".join(problems) + "\n")

@@ -2,6 +2,32 @@ $ErrorActionPreference = 'Stop'
 Set-Location (Join-Path $PSScriptRoot '..')
 New-Item -ItemType Directory -Force artifacts | Out-Null
 $engine = if ($env:GODOT_BIN) { $env:GODOT_BIN } else { 'godot' }
+$commit = 'unknown'
+$branch = 'unknown'
+$dirty = 'unknown'
+$osName = 'unknown'
+$godotHeader = 'unknown'
+try { $commit = "$((git rev-parse HEAD) | Out-String)".Trim() } catch { $commit = 'unknown' }
+if (-not $commit) { $commit = 'unknown' }
+try { $branch = "$((git rev-parse --abbrev-ref HEAD) | Out-String)".Trim() } catch { $branch = 'unknown' }
+if (-not $branch) { $branch = 'unknown' }
+try {
+    $porcelain = & git status --porcelain
+    if ($LASTEXITCODE -ne 0) { $dirty = 'unknown' }
+    elseif ([string]::IsNullOrWhiteSpace("$porcelain")) { $dirty = 'clean' }
+    else { $dirty = 'dirty' }
+} catch { $dirty = 'unknown' }
+try { $osName = [System.Runtime.InteropServices.RuntimeInformation]::OSDescription } catch { $osName = 'unknown' }
+if (-not $osName) { $osName = 'unknown' }
+try {
+    $godotHeader = "$((& $engine --headless --version) | Out-String)".Trim()
+    if ($LASTEXITCODE -ne 0 -or -not $godotHeader) { $godotHeader = 'unknown' }
+} catch { $godotHeader = 'unknown' }
+Write-Output "commit: $commit"
+Write-Output "branch: $branch"
+Write-Output "dirty: $dirty"
+Write-Output "os: $osName"
+Write-Output "godot: $godotHeader"
 $version = & $engine --headless --version
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 $version | Tee-Object artifacts/version.log
