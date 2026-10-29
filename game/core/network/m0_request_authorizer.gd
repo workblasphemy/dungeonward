@@ -66,7 +66,7 @@ func _invoke(sender_peer_id: int, payload: Dictionary, required: Array[String],
         "advance":
             if typeof(payload["session_player_id"]) != TYPE_INT or typeof(payload["reservation_token"]) != TYPE_STRING or typeof(payload["expected_revision"]) != TYPE_INT or typeof(payload["next_state"]) != TYPE_STRING:
                 return _fail("INVALID_MESSAGE")
-            if payload["reservation_token"].length() != 32 or not payload["next_state"] in ["READY", "ACTIVE"]:
+            if payload["reservation_token"].length() != 32 or not (payload["next_state"] in ["READY", "ACTIVE"]):
                 return _fail("INVALID_MESSAGE")
             result = _registry.advance_state(sender_peer_id, payload["session_player_id"],
                 payload["reservation_token"], payload["expected_revision"], payload["next_state"], now_ms)
