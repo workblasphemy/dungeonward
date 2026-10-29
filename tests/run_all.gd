@@ -27,6 +27,14 @@ func _initialize() -> void:
         check(status != null and status.text.contains("M0 foundation"),
             "foundation status is visible in the scene")
         scene.free()
+    var token_script: Script = load("res://game/core/identity/reservation_token_provider.gd") as Script
+    check(token_script != null, "secure token provider loads")
+    if token_script != null:
+        var provider: Variant = token_script.new()
+        var secure_a: String = provider.generate_token()
+        var secure_b: String = provider.generate_token()
+        check(secure_a.length() == 32, "secure token has 128-bit hex length")
+        check(secure_a != secure_b, "two secure tokens differ")
     var lobby_script: Script = load("res://game/core/lobby/lobby_registry.gd") as Script
     check(lobby_script != null, "M0 lobby registry script loads")
     if lobby_script != null:
