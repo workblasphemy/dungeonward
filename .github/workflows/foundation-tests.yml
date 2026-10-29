@@ -46,12 +46,20 @@ jobs:
       - name: Windows negative control
         if: runner.os == 'Windows'
         shell: pwsh
+        env:
+          GODOT_BIN: .tools/godot-4.7.2/Godot_v4.7.2-stable_win64_console.exe
         run: |
           $ErrorActionPreference = 'Continue'
           New-Item -ItemType Directory -Force artifacts | Out-Null
-          $engine = '.tools/godot-4.7.2/Godot_v4.7.2-stable_win64_console.exe'
-          & $engine --headless --path . --script res://tests/run_all.gd -- --self-test-failure 2>&1 | Tee-Object artifacts/negative-control.log
+          Write-Host "cwd=$PWD"
+          Write-Host "engine=$env:GODOT_BIN exists=$(Test-Path $env:GODOT_BIN)"
+          if (-not (Test-Path $env:GODOT_BIN)) {
+            Get-ChildItem .tools -Recurse -Depth 2 -ErrorAction SilentlyContinue | ForEach-Object FullName
+            throw "engine not found at $env:GODOT_BIN"
+          }
+          & $env:GODOT_BIN --headless --path . --script res://tests/run_all.gd -- --self-test-failure 2>&1 | Tee-Object artifacts/negative-control.log
           $code = $LASTEXITCODE
+          Write-Host "engine_exit=$code"
           if ($code -eq 0) { throw 'Negative control unexpectedly succeeded' }
           if (-not (Select-String -Path artifacts/negative-control.log -Pattern '^RESULT: [1-9][0-9]* checks, 1 failures$' -Quiet)) {
             throw 'Negative control summary missing'
