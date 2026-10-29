@@ -110,6 +110,53 @@ func _initialize() -> void:
                         "capacity distribution %s peer %d local %d" % [str(distribution), peer_id, local_id])
                 peer_id += 1
             check(matrix.snapshot().size() == 4, "distribution %s fills four seats" % str(distribution))
+    var auth_script: Script = load("res://game/core/network/m0_request_authorizer.gd") as Script
+    check(auth_script != null, "M0 request authorizer loads")
+    if auth_script != null:
+        var auth: Variant = auth_script.new()
+        var request: Dictionary = {"request_id": "r1", "local_slot_id": 0, "protocol_version": 1}
+        var issued: Dictionary = auth.request_slot(1, request, 0)
+        check(issued["ok"] and issued["reservation_token"].length() == 32,
+            "trusted host generates reservation token")
+        check(auth.request_slot(1, request, 0) == issued, "identical replay returns cached result")
+        check(auth.registry_snapshot().size() == 1, "replayed reservation does not allocate again")
+        check(auth.request_slot(1, {"request_id": "r1", "local_slot_id": 1,
+            "protocol_version": 1}, 0)["error_code"] == "REQUEST_ID_CONFLICT",
+            "conflicting replay rejected")
+        check(auth.request_slot(1, {"request_id": "bad", "local_slot_id": "0",
+            "protocol_version": 1}, 0)["error_code"] == "INVALID_MESSAGE",
+            "invalid field types rejected")
+        check(auth.request_slot(1, {"request_id": "extra", "local_slot_id": 1,
+            "protocol_version": 1, "peer_id": 2}, 0)["error_code"] == "INVALID_MESSAGE",
+            "untrusted sender field rejected")
+        var selection: Dictionary = {"request_id": "s1",
+            "session_player_id": issued["session_player_id"],
+            "reservation_token": issued["reservation_token"], "owner_profile_id": "owner-a",
+            "character_id": "char-a", "save_schema": 1, "save_revision": 0}
+        check(auth.select_character(2, selection, 0)["error_code"] == "UNAUTHORIZED",
+            "sender identity is supplied by trusted adapter")
+        check(auth.select_character(1, selection, 0)["ok"], "authorized character selection succeeds")
+        check(auth.select_character(1, selection, 0)["ok"], "character selection replay is idempotent")
+        var revision: int = auth.registry_snapshot()[0]["revision"]
+        var advance: Dictionary = {"request_id": "a1",
+            "session_player_id": issued["session_player_id"],
+            "reservation_token": issued["reservation_token"],
+            "expected_revision": revision - 1, "next_state": "READY"}
+        check(auth.advance_state(1, advance, 0)["error_code"] == "STALE_REVISION",
+            "stale revision rejected")
+        advance["request_id"] = "a2"
+        advance["expected_revision"] = revision
+        check(auth.advance_state(1, advance, 0)["ok"], "READY transition accepted")
+        check(auth.advance_state(1, advance, 0)["ok"], "READY replay is idempotent")
+        advance["request_id"] = "a3"
+        advance["expected_revision"] = auth.registry_snapshot()[0]["revision"]
+        advance["next_state"] = "ACTIVE"
+        check(auth.advance_state(1, advance, 0)["ok"], "ACTIVE transition accepted")
+        check(auth.registry_snapshot()[0]["state"] == "ACTIVE", "ACTIVE state recorded")
+        auth.host_expire(999999)
+        check(auth.registry_snapshot().size() == 1, "ACTIVE slot exempt from join timeout")
+        auth.host_disconnect(1)
+        check(auth.registry_snapshot().is_empty(), "host disconnect cleans up active seat")
     if "--self-test-failure" in OS.get_cmdline_user_args():
         check(false, "intentional runner failure probe")
     print("RESULT: %d checks, %d failures" % [checks, failures])
