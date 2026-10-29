@@ -34,6 +34,10 @@ modding API, public extension compatibility promise or final content schema.
 
 Explicit dependencies add small amounts of wiring but keep ownership and lifecycle visible. A global service locator is simpler initially but hides dependencies and cleanup; an elaborate plugin framework adds unneeded compatibility and security obligations. Both are deferred. Folder names and adapter interfaces may change during review without changing approved gameplay.
 
+## Approved M0 pending-selection timeout (2026-10-28)
+
+The project owner approved a 60-second inactivity deadline for `CHARACTER_SELECTED` slots. Successful selection begins a new 60-second deadline; only validated progress toward readiness may refresh it. Expiry releases the seat and its character lock. The pending-join timeout does not apply to `ACTIVE` players. `READY` and `ACTIVE` transitions, trusted progress validation, and their tests remain M0 implementation work; this policy does not authorize M1 or gameplay.
+
 ## Review and implementation gates
 
 The project owner approved these contracts with the canonical documentation layout clarification on 2026-10-28. Add identity DTOs and an in-memory registry only after the initial harness has actual Linux and Windows evidence, as required by Foundation v0.5 §14. Transport, controllers, persistence and gameplay remain later milestones. Any accepted change to existing contracts requires concurrent blueprint and affected-spec updates under ADR-0001. This proposal does not supersede it.
