@@ -30,7 +30,7 @@ func _initialize() -> void:
     var lobby_script: Script = load("res://game/core/lobby/lobby_registry.gd") as Script
     check(lobby_script != null, "M0 lobby registry script loads")
     if lobby_script != null:
-        var lobby: RefCounted = lobby_script.new()
+        var lobby: Variant = lobby_script.new()
         var first: Dictionary = lobby.reserve(1, 0, 1, 0, "token-a")
         check(first["ok"], "first slot reservation succeeds")
         check(lobby.reserve(1, 0, 1, 0, "token-b")["error_code"] == "SLOT_OCCUPIED",
