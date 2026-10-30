@@ -64,6 +64,8 @@ jobs:
           if (-not (Select-String -Path artifacts/negative-control.log -Pattern '^RESULT: [1-9][0-9]* checks, 1 failures$' -Quiet)) {
             throw 'Negative control summary missing'
           }
+          # GitHub's pwsh wrapper otherwise propagates Godot's expected exit 1.
+          exit 0
       - name: Upload evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
