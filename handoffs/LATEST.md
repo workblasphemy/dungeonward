@@ -1,25 +1,25 @@
 # Latest handoff
 
 ```status
-Seq: 0012
-Date: 2026-10-30 00:33 PDT
+Seq: 0014
+Date: 2026-10-30 00:55 PDT
 Verdict: IMPLEMENTED
-Type: review
-Build/commit: 55ed5f6a086b27c9ae84470d5fa302f2368a88ce
-Feature/task IDs: M0-01
-Reviewed note: 0011
-Next owner: owner
-Next action: Decide M0 contract-layer acceptance and authorize M1 if ready.
+Type: feature
+Build/commit: 38c8d72a0cd0720e0f59af04eb90742621611b10
+Feature/task IDs: M1-IP-01
+Reviewed note: 0013
+Next owner: deepseek
+Next action: Verify M1 device registry on Windows and Ubuntu CI; audit disconnect ownership, invalid IDs, no silent reassignment; report any failures.
 ```
 
-Note: [0012_codex_m0-contract-review.md](0010_codex_release-slot-boundary.md)
+Note: [0014_codex_m1-device-registry.md](0014_codex_m1-device-registry.md)
 
-Next seq: 0013
+Next seq: 0015
 
 Working branch: feature/m0-foundation
 
 Gist:
-- Implemented validated, idempotent release_slot request in pure M0 authorizer.
-- Seven assertions added; Windows 83/0, negative 84/1, independent 25/0 verified.
-- Foundation Windows and Ubuntu CI passed at 55ed5f6.
-- Codex recommends M0 contract acceptance; owner decision pending; M1 has not started.
+- Owner accepted M0 contract layer and authorized M1 in 0013.
+- Codex implemented M1 IP-01 local device ownership in pure registry.
+- Added 14 checks; expected 97 normal checks, not yet verified.
+- DeepSeek to verify Windows and Ubuntu, then hand off for IP-02 double-Start join.
