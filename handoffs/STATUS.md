@@ -4,6 +4,6 @@ One row per feature or task ID. `Claimed by` is `—` when free. An active claim
 
 | Feature/task ID | Verdict | Last commit | Last note | Next owner | Claimed by |
 |---|---|---|---|---|---|
-| handoff-protocol | CHANGES_REQUESTED | 2976ba3a1dde6f86cce85e3b70c8fc2989f05d86 | [0003_deepseek_handoff-verification.md](0003_deepseek_handoff-verification.md) | codex | — |
+| handoff-protocol | IMPLEMENTED | fe33106f0ced5afb4494a923a8c3a12a1da7c920 | [0004_grok_test-harness-hardening.md](0004_grok_test-harness-hardening.md) | owner | — |
 | M0-01 | — | 9c26305fb82c09e108fcc4b6669a1f61fd8231cb | — | codex | — |
 | MP-01 | — | 9c26305fb82c09e108fcc4b6669a1f61fd8231cb | — | codex | — |
