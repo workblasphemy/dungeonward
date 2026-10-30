@@ -209,6 +209,33 @@ func _initialize() -> void:
         retry_auth.host_expire(60000)
         check(retry_auth.request_slot(8, retry_request, 60000)["ok"],
             "expired replay entries cannot permanently block requests")
+    var device_script: Script = load("res://game/core/input/device_registry.gd") as Script
+    check(device_script != null, "M1 local device registry loads")
+    if device_script != null:
+        var devices: Variant = device_script.new()
+        check(devices.bind_device(10, 0)["ok"], "first device claims local slot")
+        check(devices.bind_device(11, 1)["ok"], "second device claims separate local slot")
+        check(devices.bind_device(10, 2)["error_code"] == "DEVICE_ASSIGNED",
+            "assigned device cannot claim a second slot")
+        check(devices.bind_device(12, 1)["error_code"] == "SLOT_OCCUPIED",
+            "two devices cannot control one slot")
+        check(devices.bind_device(12, 4)["error_code"] == "INVALID_ID",
+            "out-of-range local slot rejected")
+        check(devices.bind_device(-1, 2)["error_code"] == "INVALID_ID",
+            "negative device ID rejected")
+        check(devices.disconnect_device(10)["ok"] and not devices.is_connected(10),
+            "disconnect pauses device without releasing ownership")
+        check(devices.slot_for_device(10) == 0 and devices.device_for_slot(0) == 10,
+            "disconnect retains device and slot identity")
+        check(devices.bind_device(12, 0)["error_code"] == "SLOT_OCCUPIED",
+            "disconnected device slot cannot be silently stolen")
+        check(devices.reconnect_device(10)["ok"] and devices.is_connected(10),
+            "same device reconnect restores connected state")
+        check(devices.unbind_device(10)["ok"] and devices.slot_for_device(10) == -1,
+            "explicit unbind frees device ownership")
+        check(devices.bind_device(12, 0)["ok"], "released slot is reusable")
+        check(devices.assignments().size() == 2,
+            "assignment snapshot includes only current devices")
     if "--self-test-failure" in OS.get_cmdline_user_args():
         check(false, "intentional runner failure probe")
     print("RESULT: %d checks, %d failures" % [checks, failures])
