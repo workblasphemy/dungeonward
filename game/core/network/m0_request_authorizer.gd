@@ -77,6 +77,13 @@ func _invoke(sender_peer_id: int, payload: Dictionary, required: Array[String],
             result = _registry.select_character(sender_peer_id, payload["session_player_id"],
                 payload["reservation_token"], payload["owner_profile_id"], payload["character_id"],
                 payload["save_schema"], payload["save_revision"], now_ms)
+        "release":
+            if typeof(payload["session_player_id"]) != TYPE_INT or typeof(payload["reservation_token"]) != TYPE_STRING:
+                return _fail("INVALID_MESSAGE")
+            if payload["reservation_token"].length() != 32:
+                return _fail("INVALID_MESSAGE")
+            result = _registry.release(sender_peer_id, payload["session_player_id"],
+                payload["reservation_token"])
         "advance":
             if typeof(payload["session_player_id"]) != TYPE_INT or typeof(payload["reservation_token"]) != TYPE_STRING or typeof(payload["expected_revision"]) != TYPE_INT or typeof(payload["next_state"]) != TYPE_STRING:
                 return _fail("INVALID_MESSAGE")
@@ -103,6 +110,10 @@ func select_character(sender_peer_id: int, payload: Dictionary, now_ms: int) -> 
 func advance_state(sender_peer_id: int, payload: Dictionary, now_ms: int) -> Dictionary:
     return _invoke(sender_peer_id, payload, ["request_id", "session_player_id", "reservation_token",
         "expected_revision", "next_state"], "advance", now_ms)
+
+func release_slot(sender_peer_id: int, payload: Dictionary, now_ms: int) -> Dictionary:
+    return _invoke(sender_peer_id, payload, ["request_id", "session_player_id",
+        "reservation_token"], "release", now_ms)
 
 func registry_snapshot() -> Array[Dictionary]:
     return _registry.snapshot()
