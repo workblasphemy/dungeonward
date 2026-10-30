@@ -223,13 +223,13 @@ func _initialize() -> void:
             "out-of-range local slot rejected")
         check(devices.bind_device(-1, 2)["error_code"] == "INVALID_ID",
             "negative device ID rejected")
-        check(devices.disconnect_device(10)["ok"] and not devices.is_connected(10),
+        check(devices.disconnect_device(10)["ok"] and not devices.device_is_connected(10),
             "disconnect pauses device without releasing ownership")
         check(devices.slot_for_device(10) == 0 and devices.device_for_slot(0) == 10,
             "disconnect retains device and slot identity")
         check(devices.bind_device(12, 0)["error_code"] == "SLOT_OCCUPIED",
             "disconnected device slot cannot be silently stolen")
-        check(devices.reconnect_device(10)["ok"] and devices.is_connected(10),
+        check(devices.reconnect_device(10)["ok"] and devices.device_is_connected(10),
             "same device reconnect restores connected state")
         check(devices.unbind_device(10)["ok"] and devices.slot_for_device(10) == -1,
             "explicit unbind frees device ownership")
