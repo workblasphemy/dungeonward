@@ -12,6 +12,12 @@ func check(condition: bool, description: String) -> void:
         push_error("FAIL: " + description)
 
 func _initialize() -> void:
+    var gesture_script: Script = load("res://game/core/input/join_gesture.gd") as Script
+    check(gesture_script != null, "M1 join gesture script loads")
+    var gesture_tests: Script = load("res://tests/unit/test_join_gesture.gd") as Script
+    check(gesture_tests != null, "M1 join gesture tests load")
+    if gesture_script != null and gesture_tests != null:
+        gesture_tests.run(Callable(self, "check"), gesture_script)
     var version: Dictionary = Engine.get_version_info()
     check(version.major == 4 and version.minor == 7 and version.patch == 2,
         "approved engine version is 4.7.2")
