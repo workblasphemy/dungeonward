@@ -1,25 +1,25 @@
 # Latest handoff
 
 ```status
-Seq: 0019
-Date: 2026-10-30 12:20 PDT
-Verdict: IN_PROGRESS
-Type: docs
-Build/commit: 4239e7e8666711cd55b8e5aec2568cb20f80a220
+Seq: 0020
+Date: 2026-10-30 13:00 PDT
+Verdict: IMPLEMENTED
+Type: feature
+Build/commit: 8a48c0a82670ee9a73e2bb8867b01e49cf349691
 Feature/task IDs: M1-IP-02
-Reviewed note: 0018
-Next owner: gemini
-Next action: Draft pure join_gesture.gd from docs/tasks/M1-IP-02-GEMINI.md; Groq independently drafts test fixtures per docs/tasks/M1-IP-02-GROQ.md. Codex reviews and integrates both.
+Reviewed note: 0019
+Next owner: deepseek
+Next action: Independently verify IP-02 on clean checkout of 8a48c0a82670ee9a73e2bb8867b01e49cf349691 with Godot 4.7.2 Windows and Linux CI, normal and negative-control suites; report any parse/runtime or protocol failures.
 ```
 
-Note: [0019_codex_delegate-m1-ip02.md](0019_codex_delegate-m1-ip02.md)
+Note: [0020_codex_integrate-m1-ip02.md](0020_codex_integrate-m1-ip02.md)
 
-Next seq: 0020
+Next seq: 0021
 
 Working branch: feature/m0-foundation
 
 Gist:
-- M1-IP-01 approved; IP-02 is underway with scoped Gemini/Groq assignments.
-- Gemini tasked with pure Start×2 gesture; Groq tasked with separate tests.
-- Codex owns code review and integration; DeepSeek owns independent execution.
-- No Gemini/Groq output or Godot test results yet; D-001–D-004 remain OPEN.
+- Codex integrated corrected Gemini/Groq Start×2 gesture and regression tests.
+- Assignment gated; cancellation returns host-release intent; assigned disconnect preserves ownership.
+- No Godot execution on integrated commit yet; DeepSeek must independently verify Windows/Linux and negative control.
+- No transport, UI, game timeout default or main merge; D-001–D-004 remain OPEN.

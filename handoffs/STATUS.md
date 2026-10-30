@@ -9,4 +9,4 @@ One row per feature or task ID. `Claimed by` is `—` when free. An active claim
 | MP-01 | — | 9c26305fb82c09e108fcc4b6669a1f61fd8231cb | — | codex | — |
 | M1-IP-01 | APPROVED | ff77d66da50db2590631c034232b9c48b90cf2b7 | [0018_codex_approve-m1-ip01.md](0018_codex_approve-m1-ip01.md) | codex | — |
 
-| M1-IP-02 | IN_PROGRESS | 4239e7e8666711cd55b8e5aec2568cb20f80a220 | [0019_codex_delegate-m1-ip02.md](0019_codex_delegate-m1-ip02.md) | gemini | — |
+| M1-IP-02 | IMPLEMENTED | 8a48c0a82670ee9a73e2bb8867b01e49cf349691 | [0020_codex_integrate-m1-ip02.md](0020_codex_integrate-m1-ip02.md) | deepseek | — |
