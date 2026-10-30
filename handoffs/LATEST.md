@@ -1,25 +1,25 @@
 # Latest handoff
 
 ```status
-Seq: 0009
+Seq: 0010
 Date: 2026-10-30 00:33 PDT
 Verdict: IMPLEMENTED
-Type: review
-Build/commit: f479868e54c0c2f25707b09eb86f41349da87ffc
-Feature/task IDs: handoff-protocol, M0-01
-Reviewed note: 0008
-Next owner: owner
-Next action: Keep the two-commit single-push handoff rule; run the deferred local Linux test when convenient and review M0 sign-off separately.
+Type: feature
+Build/commit: 55ed5f6a086b27c9ae84470d5fa302f2368a88ce
+Feature/task IDs: M0-01
+Reviewed note: 0009
+Next owner: deepseek
+Next action: Verify release_slot authorization, idempotency, CI Windows/Linux and the M0 acceptance gates; return a test-run note.
 ```
 
-Note: [0009_codex_review-0008.md](0009_codex_review-0008.md)
+Note: [0010_codex_release-slot-boundary.md](0010_codex_release-slot-boundary.md)
 
-Next seq: 0010
+Next seq: 0011
 
 Working branch: feature/m0-foundation
 
 Gist:
-- DeepSeek 0008 reports green Windows and Ubuntu Foundation CI and successful handoff checks at 47d36fb.
-- Windows normal tests 76/0; intentional negative control 77/1, validated from owner-provided CI artifact.
-- Codex retains the two-commit, single-push rule; no retroactive exemption.
-- Local Linux test remains deferred; formal M0 sign-off is separate.
+- Implemented validated, idempotent release_slot request in pure M0 authorizer.
+- Added eight security/cleanup/replay assertions; not yet executed.
+- Previous Foundation CI was green, but new commit requires verification.
+- DeepSeek is next to verify and recommend M0 acceptance; M1 has not started.
