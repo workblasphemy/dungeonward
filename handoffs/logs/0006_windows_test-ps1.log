@@ -1,0 +1,104 @@
+commit: b17c3a290ee3bf9ccac7ffd4f384e2bb7d427dc9
+branch: feature/m0-foundation
+dirty: clean
+os: Microsoft Windows 10.0.26300 
+godot: 4.7.2.stable.official.ed1daf0bf
+4.7.2.stable.official.ed1daf0bf
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Started Project initialization (5 steps)[39m[0m
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Scanning file structure...[39m[0m
+[  16% ] [90m[1mfirst_scan_filesystem[22m | Loading global class names...[39m[0m
+[  33% ] [90m[1mfirst_scan_filesystem[22m | Verifying GDExtensions...[39m[0m
+[  50% ] [90m[1mfirst_scan_filesystem[22m | Creating autoload scripts...[39m[0m
+[  66% ] [90m[1mfirst_scan_filesystem[22m | Initializing plugins...[39m[0m
+[  83% ] [90m[1mfirst_scan_filesystem[22m | Starting file scan...[39m[0m
+[92m[ DONE ][39m [1mfirst_scan_filesystem[22m
+[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Started Loading editor (5 steps)[39m[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Loading editor layout...[39m[0m
+[  16% ] [90m[1mloading_editor_layout[22m | Loading docks...[39m[0m
+[92m[ DONE ][39m [1mloading_editor_layout[22m
+[0m
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: approved engine version is 4.7.2
+PASS: project boots the foundation scene
+PASS: main scene loads
+PASS: main scene instantiates as the application shell
+PASS: foundation status is visible in the scene
+PASS: secure token provider loads
+PASS: secure token has 128-bit hex length
+PASS: two secure tokens differ
+PASS: M0 lobby registry script loads
+PASS: first slot reservation succeeds
+PASS: duplicate local slot rejected
+PASS: duplicate reservation token rejected
+PASS: second peer reserves same local index
+PASS: foreign sender rejected
+PASS: owner selects character
+PASS: duplicate character rejected
+PASS: snapshot includes both reservations
+PASS: disconnect releases character lock
+PASS: owner release succeeds
+PASS: release is idempotent
+PASS: reservation expires at deadline
+PASS: session player IDs are not reused
+PASS: foreign and unknown release responses are identical
+PASS: foreign release does not mutate state
+PASS: owner can release seat
+PASS: authorized release actually removes its seat
+PASS: selection begins inactivity deadline
+PASS: selected seat survives before deadline
+PASS: valid progress refreshes selected-seat timeout
+PASS: refreshed seat survives until deadline
+PASS: selected seat expires at refreshed deadline
+PASS: expired character lock is released
+PASS: one peer reserves slot 0
+PASS: one peer reserves slot 1
+PASS: one peer reserves slot 2
+PASS: one peer reserves slot 3
+PASS: fifth reservation rejected
+PASS: capacity rejection does not mutate state
+PASS: capacity distribution [3, 1] peer 1 local 0
+PASS: capacity distribution [3, 1] peer 1 local 1
+PASS: capacity distribution [3, 1] peer 1 local 2
+PASS: capacity distribution [3, 1] peer 2 local 0
+PASS: distribution [3, 1] fills four seats
+PASS: capacity distribution [2, 1, 1] peer 1 local 0
+PASS: capacity distribution [2, 1, 1] peer 1 local 1
+PASS: capacity distribution [2, 1, 1] peer 2 local 0
+PASS: capacity distribution [2, 1, 1] peer 3 local 0
+PASS: distribution [2, 1, 1] fills four seats
+PASS: capacity distribution [1, 1, 1, 1] peer 1 local 0
+PASS: capacity distribution [1, 1, 1, 1] peer 2 local 0
+PASS: capacity distribution [1, 1, 1, 1] peer 3 local 0
+PASS: capacity distribution [1, 1, 1, 1] peer 4 local 0
+PASS: distribution [1, 1, 1, 1] fills four seats
+PASS: M0 request authorizer loads
+PASS: trusted host generates reservation token
+PASS: identical replay returns cached result
+PASS: replayed reservation does not allocate again
+PASS: conflicting replay rejected
+PASS: invalid field types rejected
+PASS: untrusted sender field rejected
+PASS: sender identity is supplied by trusted adapter
+PASS: authorized character selection succeeds
+PASS: character selection replay is idempotent
+PASS: stale revision rejected
+PASS: READY transition accepted
+PASS: READY replay is idempotent
+PASS: ACTIVE transition accepted
+PASS: ACTIVE state recorded
+PASS: ACTIVE slot exempt from join timeout
+PASS: host disconnect cleans up active seat
+PASS: READY test selection succeeds
+PASS: READY starts a fresh pending deadline
+PASS: READY survives before deadline
+PASS: abandoned READY seat expires
+PASS: reservation replay preserves original token within retry window
+PASS: expired replay entries cannot permanently block requests
+RESULT: 76 checks, 0 failures
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+EXIT: 0

@@ -1,0 +1,132 @@
+# check_handoff.py deliberate-failure cases A-G, run by Grok on GlubGlub (Windows 10.0.26300, Python 3.14, PortableGit) from feature/m0-foundation @ b17c3a2, on local branch tmp/handoff-negative-test (never pushed, deleted). Driver: python run_cases.py; each case committed on the tmp branch, checked, then git reset --hard feature/m0-foundation.
+$ git checkout -b tmp/handoff-negative-test -> rc 0 
+
+$ python tools/check_handoff.py --self-test
+SELF-TEST: ok
+EXIT: 0
+
+=== Case A: code without a note (comment added to tools/check_handoff.py)
+$ python tools/check_handoff.py --base feature/m0-foundation --head HEAD
+PASS: sequence numbers unique (highest 0005)
+PASS: numbered notes have the required status block, enums, date, and slug
+PASS: LATEST.md points at 0005_deepseek_review-0004.md
+PASS: LATEST.md Next seq is 0006
+PASS: LATEST.md working branch is feature/m0-foundation
+PASS: LATEST.md status block matches the highest note
+PASS: STATUS.md slugs and claims (3 rows)
+PASS: no commit adds a note and also changes files outside handoffs/
+FAIL: push range changes files outside handoffs/ and docs/ without adding handoffs/NNNN_<slug>_<task>.md: tools/check_handoff.py. Include the note commit in the same push.
+PASS: no merge commit in the push
+RESULT: failed (1 failures, 0 warnings)
+EXIT: 1
+
+=== Case B: note 0006_deepseek_test.md + LATEST + tools edit in one commit
+$ python tools/check_handoff.py --base feature/m0-foundation --head HEAD
+PASS: sequence numbers unique (highest 0006)
+PASS: numbered notes have the required status block, enums, date, and slug
+PASS: LATEST.md points at 0006_deepseek_test.md
+PASS: LATEST.md Next seq is 0007
+PASS: LATEST.md working branch is feature/m0-foundation
+PASS: LATEST.md status block matches the highest note
+PASS: STATUS.md slugs and claims (3 rows)
+FAIL: commit 29ae9016bf2ac9833f34353a07f22be03b67dd41 adds a handoff note and also changes files outside handoffs/: tools/check_handoff.py. Put those edits in an earlier code commit. The note commit may only touch handoffs/. Push the code commit and the note commit together.
+PASS: changes outside handoffs/ and docs/ are covered by a new handoff note
+PASS: no merge commit in the push
+RESULT: failed (1 failures, 0 warnings)
+EXIT: 1
+
+=== Case C: 0006_deepseek_test.md with Verdict: DONE (LATEST updated)
+$ python tools/check_handoff.py --base feature/m0-foundation --head HEAD
+FAIL: handoffs/0006_deepseek_test.md: Verdict 'DONE' is not one of APPROVED, BLOCKED, CHANGES_REQUESTED, IMPLEMENTED, IN_PROGRESS
+PASS: sequence numbers unique (highest 0006)
+PASS: LATEST.md points at 0006_deepseek_test.md
+PASS: LATEST.md Next seq is 0007
+PASS: LATEST.md working branch is feature/m0-foundation
+PASS: LATEST.md status block matches the highest note
+PASS: STATUS.md slugs and claims (3 rows)
+PASS: no commit adds a note and also changes files outside handoffs/
+PASS: no changes outside handoffs/ and docs/
+PASS: no merge commit in the push
+RESULT: failed (1 failures, 0 warnings)
+EXIT: 1
+
+=== Case D: 0006_deepseek_test.md with Verdict: APPROVED (LATEST updated)
+$ python tools/check_handoff.py --base feature/m0-foundation --head HEAD
+FAIL: handoffs/0006_deepseek_test.md: Verdict APPROVED is only allowed when the filename slug is codex or owner (got deepseek)
+FAIL: handoffs/0006_deepseek_test.md: APPROVED note is missing Command:, OS/environment:, Godot version:
+PASS: sequence numbers unique (highest 0006)
+PASS: LATEST.md points at 0006_deepseek_test.md
+PASS: LATEST.md Next seq is 0007
+PASS: LATEST.md working branch is feature/m0-foundation
+PASS: LATEST.md status block matches the highest note
+PASS: STATUS.md slugs and claims (3 rows)
+PASS: no commit adds a note and also changes files outside handoffs/
+PASS: no changes outside handoffs/ and docs/
+PASS: no merge commit in the push
+RESULT: failed (2 failures, 0 warnings)
+EXIT: 1
+
+=== Case E: 0005_deepseek_dup.md with Seq: 0005 (duplicate of existing 0005)
+$ python tools/check_handoff.py --base feature/m0-foundation --head HEAD
+FAIL: duplicate sequence 0005: handoffs/0005_deepseek_dup.md, handoffs/0005_deepseek_review-0004.md
+PASS: LATEST.md points at 0005_deepseek_review-0004.md
+PASS: LATEST.md Next seq is 0006
+PASS: LATEST.md working branch is feature/m0-foundation
+PASS: LATEST.md status block matches the highest note
+PASS: STATUS.md slugs and claims (3 rows)
+PASS: no commit adds a note and also changes files outside handoffs/
+PASS: no changes outside handoffs/ and docs/
+PASS: no merge commit in the push
+RESULT: failed (1 failures, 0 warnings)
+EXIT: 1
+
+=== Case F: valid 0006_deepseek_test.md, LATEST.md not updated
+$ python tools/check_handoff.py --base feature/m0-foundation --head HEAD
+PASS: sequence numbers unique (highest 0006)
+PASS: numbered notes have the required status block, enums, date, and slug
+FAIL: LATEST.md does not name the highest note 0006_deepseek_test.md
+FAIL: LATEST.md Next seq is 0006; expected 0007
+PASS: LATEST.md working branch is feature/m0-foundation
+FAIL: LATEST.md status block does not match the highest note
+PASS: STATUS.md slugs and claims (3 rows)
+PASS: no commit adds a note and also changes files outside handoffs/
+PASS: no changes outside handoffs/ and docs/
+PASS: no merge commit in the push
+RESULT: failed (3 failures, 0 warnings)
+EXIT: 1
+
+=== Case G: 0006_chatgpt_test.md (LATEST updated)
+$ python tools/check_handoff.py --base feature/m0-foundation --head HEAD
+FAIL: handoffs/0006_chatgpt_test.md filename must be NNNN_<slug>_<short-task>.md with slug one of: codex, gemini, claude, kimi, groq, deepseek, grok, owner
+PASS: sequence numbers unique (highest 0005)
+FAIL: LATEST.md does not name the highest note 0005_deepseek_review-0004.md
+FAIL: LATEST.md Next seq is 0007; expected 0006
+PASS: LATEST.md working branch is feature/m0-foundation
+FAIL: LATEST.md status block does not match the highest note
+PASS: STATUS.md slugs and claims (3 rows)
+PASS: no commit adds a note and also changes files outside handoffs/
+PASS: no changes outside handoffs/ and docs/
+PASS: no merge commit in the push
+RESULT: failed (4 failures, 0 warnings)
+EXIT: 1
+
+=== Case CONTROL: valid 0006_deepseek_test.md with LATEST updated (should pass)
+$ python tools/check_handoff.py --base feature/m0-foundation --head HEAD
+PASS: sequence numbers unique (highest 0006)
+PASS: numbered notes have the required status block, enums, date, and slug
+PASS: LATEST.md points at 0006_deepseek_test.md
+PASS: LATEST.md Next seq is 0007
+PASS: LATEST.md working branch is feature/m0-foundation
+PASS: LATEST.md status block matches the highest note
+PASS: STATUS.md slugs and claims (3 rows)
+PASS: no commit adds a note and also changes files outside handoffs/
+PASS: no changes outside handoffs/ and docs/
+PASS: no merge commit in the push
+RESULT: ok (0 failures, 0 warnings)
+EXIT: 0
+
+$ git checkout feature/m0-foundation; git branch -D tmp/handoff-negative-test -> Deleted branch tmp/handoff-negative-test (was b17c3a2). rc 0
+
+$ git status --porcelain -> []
+$ git branch --list tmp/* -> []
+HEAD: b17c3a290ee3bf9ccac7ffd4f384e2bb7d427dc9

@@ -1,25 +1,25 @@
 # Latest handoff
 
 ```status
-Seq: 0005
-Date: 2026-10-29 21:50 PDT
+Seq: 0006
+Date: 2026-10-29 22:25 PDT
 Verdict: IMPLEMENTED
-Type: review
-Build/commit: fe33106f0ced5afb4494a923a8c3a12a1da7c920
+Type: test-run
+Build/commit: b17c3a290ee3bf9ccac7ffd4f384e2bb7d427dc9
 Feature/task IDs: handoff-protocol
-Reviewed note: 0004
+Reviewed note: 0005
 Next owner: owner
-Next action: Commit the three generated .uid files, then run cases A–G on a git-capable checkout and tools/test.sh on Linux.
+Next action: Run tools/test.sh on Linux when available (deferred by owner); codex to triage the Foundation Windows negative control step.
 ```
 
-Note: [0005_deepseek_review-0004.md](0005_deepseek_review-0004.md)
+Note: [0006_grok_uid-and-negative-cases.md](0006_grok_uid-and-negative-cases.md)
 
-Next seq: 0006
+Next seq: 0007
 
 Working branch: feature/m0-foundation
 
 Gist:
-- 0004 verified: both fail-fast guards reproduced (no git → exit 1; windowed engine → exit 1 with console hint); the note-0003 silent exit-0 path is closed.
-- Windows log is consistent with the 76-check suite; Linux suite still not run.
-- Commit the three `.uid` files before the next test run, or that run reports `dirty: dirty` and cannot serve as proof.
-- Cases A–G remain unrun: no git, dulwich or pygit2 in the verifying environment.
+- The three generated `.uid` files are tracked (`b17c3a2`); the Windows suite re-ran from a clean tree: `dirty: clean`, 76 checks, 0 failures, exit 0.
+- check_handoff.py cases A–G all fail as expected with exit 1; a valid control note passes with exit 0.
+- Linux `tools/test.sh` still not run (deferred by owner).
+- Foundation *Windows negative control* step still red, pre-existing; codex to triage.
