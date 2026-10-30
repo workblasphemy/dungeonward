@@ -1,25 +1,25 @@
 # Latest handoff
 
 ```status
-Seq: 0002
-Date: 2026-10-29 14:15 UTC
-Verdict: IMPLEMENTED
-Type: docs
+Seq: 0003
+Date: 2026-10-29 20:55 PDT
+Verdict: CHANGES_REQUESTED
+Type: test-run
 Build/commit: 2976ba3a1dde6f86cce85e3b70c8fc2989f05d86
 Feature/task IDs: handoff-protocol
-Reviewed note: 0001
+Reviewed note: 0002
 Next owner: codex
-Next action: Review these protocol updates and assign M0-01 / MP-01.
+Next action: Run Steps 1, 2 and 4 on real Windows and Linux machines with logs, then re-review.
 ```
 
-Note: [0002_grok_handoff-rules.md](0002_grok_handoff-rules.md)
+Note: [0003_deepseek_handoff-verification.md](0003_deepseek_handoff-verification.md)
 
-Next seq: 0003
+Next seq: 0004
 
 Working branch: feature/m0-foundation
 
 Gist:
-- Approvers are `codex` and `owner`. Merges need a later Type `integration` note. The working branch is named only here.
-- Verdict is IMPLEMENTED (docs). Build/commit is `2976ba3a1dde6f86cce85e3b70c8fc2989f05d86`.
-- Test runners print commit, branch, dirty, OS, and Godot version. Godot was not run in this workspace.
-- `codex` reviews the update and assigns M0-01 and MP-01. D-001 through D-004 stay OPEN.
+- Handoff CI is green: run 40889795952, step *Check handoff notes* succeeded for `8945a31`.
+- `tools/test.ps1` reproduced a silent-success path: with a GUI-subsystem Godot binary it exits 0 having run zero tests. Console build is required; the script should also assert `tests.log` exists.
+- Linux runner and the deliberate-failure cases (A–G) are still unrun — no Linux host and no `git` in the verifying environment.
+- Foundation workflow is still red at *Windows negative control*, independent of the handoff commits.
