@@ -139,7 +139,7 @@ Hard rule: Verdict APPROVED is allowed only when the filename slug is `codex` or
 
 Logs longer than 40 lines are saved by the owner, when the owner ran the tests, to `handoffs/logs/NNNN_*.log`. The note links to that path. A model with the repo saves that file itself in the note commit.
 
-`tools/test.sh` and `tools/test.ps1` print a provenance header before the rest of their output: `commit` (`git rev-parse HEAD`), `branch`, `dirty` (`clean`, `dirty`, or `unknown` from `git status --porcelain`), `os`, and `godot`. If git or the engine is missing, that field is `unknown` and the script continues into its existing checks. A `test-run` note's `Build/commit` must be the `commit` hash printed in that log.
+`tools/test.sh` and `tools/test.ps1` print a provenance header before the rest of their output: `commit` (`git rev-parse HEAD`), `branch`, `dirty` (`clean`, `dirty`, or `unknown` from `git status --porcelain`), `os`, and `godot`. If git or the engine is missing, that field is `unknown` and the script stops with a non-zero exit before any other check, because a run without provenance cannot be used as proof. On Windows, `GODOT_BIN` must point at the `*_console.exe` build; the windowed build reports no exit code and the script now fails instead of exiting 0. A `test-run` note's `Build/commit` must be the `commit` hash printed in that log.
 
 ## Decisions
 

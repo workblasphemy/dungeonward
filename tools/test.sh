@@ -27,6 +27,14 @@ printf 'branch: %s\n' "${branch:-unknown}"
 printf 'dirty: %s\n' "${dirty:-unknown}"
 printf 'os: %s\n' "${os:-unknown}"
 printf 'godot: %s\n' "$godot_header"
+if [[ "${commit:-unknown}" == unknown || "${branch:-unknown}" == unknown || "${dirty:-unknown}" == unknown ]]; then
+  echo "FAIL: git provenance is unknown; run from a git checkout with git on PATH" >&2
+  exit 1
+fi
+if [[ "$godot_header" == unknown ]]; then
+  echo "FAIL: Godot did not report a version; set GODOT_BIN to the Godot 4.7.2 binary" >&2
+  exit 1
+fi
 version=$("$engine" --headless --version)
 printf '%s\n' "$version" | tee artifacts/version.log
 [[ "$version" == 4.7.2.stable.* ]] || { echo "Godot 4.7.2 stable required" >&2; exit 1; }
