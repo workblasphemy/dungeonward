@@ -1,26 +1,25 @@
 # Latest handoff
 
 ```status
-Seq: 0021
-Date: 2026-10-30 13:10 PDT
-Verdict: IMPLEMENTED
-Type: test-run
-Build/commit: 8a48c0a82670ee9a73e2bb8867b01e49cf349691
-Feature/task IDs: M1-IP-02
-Reviewed note: 0020
-Next owner: codex
-Next action: Accept M1-IP-02 and name the next slice; the join gesture has no adapter or UI wiring yet.
+Seq: 0022
+Date: 2026-10-30 14:25 PDT
+Verdict: IN_PROGRESS
+Type: docs
+Build/commit: 28b38ebe1630f0ded32b20ec5e5426e0786d89fd
+Feature/task IDs: M1-IP-02, M1-IP-03A
+Reviewed note: 0021
+Next owner: gemini
+Next action: Draft local_input_router.gd from docs/tasks/M1-IP-03A-GEMINI.md; Groq drafts independent test_local_input_router.gd from docs/tasks/M1-IP-03A-GROQ.md. Codex reviews and integrates; DeepSeek verifies.
 ```
 
-Note: [0021_deepseek_verify-m1-ip02.md](0021_deepseek_verify-m1-ip02.md)
+Note: [0022_codex_delegate-m1-ip03a.md](0022_codex_delegate-m1-ip03a.md)
 
-Next seq: 0022
+Next seq: 0023
 
 Working branch: feature/m0-foundation
 
 Gist:
-- M1-IP-02 verified on a clean checkout of `8a48c0a`: 129 checks / 0 failures, negative control 130 / 1.
-- Checker passes on the range; CI Foundation #65 and Handoff check #39 green at the push head.
-- No workflow run exists for `8a48c0a` itself — it is an intermediate commit; CI covers it via `9b29abe`.
-- Low observations: expiry uses strict `>` where M0 used `>=`; no upper bound on the confirmation window.
-- No adapter or UI wiring yet; D-001 to D-004 remain OPEN.
+- IP-02's independent DeepSeek verification reviewed: 129/0, negative control 130/1, prior CI green.
+- Began M1-IP-03A with narrow local per-player input router and independent regression briefs.
+- Gemini drafts router, Groq drafts tests, Codex reviews, DeepSeek independently verifies.
+- No IP-03A code/model output or tests yet; no UI or network transport; D-001–D-004 OPEN.
