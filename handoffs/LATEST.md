@@ -1,25 +1,25 @@
 # Latest handoff
 
 ```status
-Seq: 0004
-Date: 2026-10-29 21:15 PDT
+Seq: 0005
+Date: 2026-10-29 21:50 PDT
 Verdict: IMPLEMENTED
-Type: fix
+Type: review
 Build/commit: fe33106f0ced5afb4494a923a8c3a12a1da7c920
 Feature/task IDs: handoff-protocol
-Reviewed note: 0003
+Reviewed note: 0004
 Next owner: owner
-Next action: Run tools/test.sh on Linux and the check_handoff.py deliberate-failure cases A–G on a throwaway branch, then hand the logs to deepseek or codex for review.
+Next action: Commit the three generated .uid files, then run cases A–G on a git-capable checkout and tools/test.sh on Linux.
 ```
 
-Note: [0004_grok_test-harness-hardening.md](0004_grok_test-harness-hardening.md)
+Note: [0005_deepseek_review-0004.md](0005_deepseek_review-0004.md)
 
-Next seq: 0005
+Next seq: 0006
 
 Working branch: feature/m0-foundation
 
 Gist:
-- `test.ps1` and `test.sh` now fail on unknown git provenance or a missing Godot exit code; the silent exit-0 path from note 0003 is closed and was verified before and after.
-- Windows suite passed on the owner's PC with the console build: `RESULT: 76 checks, 0 failures`, exit 0, clean tree at `fe33106f0ced5afb4494a923a8c3a12a1da7c920`.
-- Still unrun: Linux `test.sh` suite and deliberate-failure cases A–G.
-- *Windows negative control* in the Foundation workflow is still red (pre-existing). Three untracked `.uid` files appear after import.
+- 0004 verified: both fail-fast guards reproduced (no git → exit 1; windowed engine → exit 1 with console hint); the note-0003 silent exit-0 path is closed.
+- Windows log is consistent with the 76-check suite; Linux suite still not run.
+- Commit the three `.uid` files before the next test run, or that run reports `dirty: dirty` and cannot serve as proof.
+- Cases A–G remain unrun: no git, dulwich or pygit2 in the verifying environment.
