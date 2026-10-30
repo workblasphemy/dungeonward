@@ -1,25 +1,25 @@
 # Latest handoff
 
 ```status
-Seq: 0006
-Date: 2026-10-29 22:25 PDT
+Seq: 0007
+Date: 2026-10-29 23:08 PDT
 Verdict: IMPLEMENTED
-Type: test-run
-Build/commit: b17c3a290ee3bf9ccac7ffd4f384e2bb7d427dc9
-Feature/task IDs: handoff-protocol
-Reviewed note: 0005
-Next owner: owner
-Next action: Run tools/test.sh on Linux when available (deferred by owner); codex to triage the Foundation Windows negative control step.
+Type: review
+Build/commit: f479868e54c0c2f25707b09eb86f41349da87ffc
+Feature/task IDs: handoff-protocol, M0-01
+Reviewed note: 0006
+Next owner: deepseek
+Next action: Verify Foundation Windows negative control is green at f479868 and inspect job logs; report any remaining CI blockers.
 ```
 
-Note: [0006_grok_uid-and-negative-cases.md](0006_grok_uid-and-negative-cases.md)
+Note: [0007_codex_ci-and-handoff-review.md](0007_codex_ci-and-handoff-review.md)
 
-Next seq: 0007
+Next seq: 0008
 
 Working branch: feature/m0-foundation
 
 Gist:
-- The three generated `.uid` files are tracked (`b17c3a2`); the Windows suite re-ran from a clean tree: `dirty: clean`, 76 checks, 0 failures, exit 0.
-- check_handoff.py cases A–G all fail as expected with exit 1; a valid control note passes with exit 0.
-- Linux `tools/test.sh` still not run (deferred by owner).
-- Foundation *Windows negative control* step still red, pre-existing; codex to triage.
+- Windows negative-control step now explicitly exits 0 after validating the expected nonzero engine exit and one-failure summary.
+- Codex reviewed the handoff protocol; formal APPROVED deferred pending current CI and checker evidence.
+- Windows 76/0 and checker A-G remain evidence from 0006, not rerun in this session.
+- Full Linux tools/test.sh remains not run (owner deferred).
