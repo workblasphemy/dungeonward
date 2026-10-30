@@ -50,7 +50,7 @@ func slot_for_device(device_id: int) -> int:
 func device_for_slot(local_slot_id: int) -> int:
     return _slots.get(local_slot_id, -1)
 
-func is_connected(device_id: int) -> bool:
+func device_is_connected(device_id: int) -> bool:
     return _devices.has(device_id) and _devices[device_id]["connected"]
 
 func assignments() -> Array[Dictionary]:
