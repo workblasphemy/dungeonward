@@ -159,6 +159,30 @@ func _initialize() -> void:
         check(auth.registry_snapshot().size() == 1, "ACTIVE slot exempt from join timeout")
         auth.host_disconnect(1)
         check(auth.registry_snapshot().is_empty(), "host disconnect cleans up active seat")
+        var release_auth: Variant = auth_script.new()
+        var release_issued: Dictionary = release_auth.request_slot(11,
+            {"request_id": "rel-reserve", "local_slot_id": 0, "protocol_version": 1}, 0)
+        var release_payload: Dictionary = {"request_id": "rel-1",
+            "session_player_id": release_issued["session_player_id"],
+            "reservation_token": release_issued["reservation_token"]}
+        var release_before: Array[Dictionary] = release_auth.registry_snapshot()
+        check(release_auth.release_slot(12, release_payload, 0)["ok"],
+            "foreign release is non-disclosing")
+        check(release_auth.registry_snapshot() == release_before,
+            "foreign release leaves ownership unchanged")
+        check(release_auth.release_slot(11, {"request_id": "rel-invalid",
+            "session_player_id": release_issued["session_player_id"],
+            "reservation_token": 123}, 0)["error_code"] == "INVALID_MESSAGE",
+            "release rejects invalid token types")
+        check(release_auth.release_slot(11, release_payload, 0)["ok"],
+            "authorized release via authorizer succeeds")
+        check(release_auth.registry_snapshot().is_empty(),
+            "authorized release via authorizer frees seat")
+        check(release_auth.release_slot(11, release_payload, 0)["ok"],
+            "release request replay is idempotent")
+        release_payload["request_id"] = "rel-2"
+        check(release_auth.release_slot(11, release_payload, 0)["ok"],
+            "release with a new request ID is idempotent")
         var ready_auth: Variant = auth_script.new()
         var ready_slot: Dictionary = ready_auth.request_slot(7,
             {"request_id": "ready-r", "local_slot_id": 0, "protocol_version": 1}, 0)
