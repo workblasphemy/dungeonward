@@ -18,6 +18,16 @@ func _initialize() -> void:
     check(gesture_tests != null, "M1 join gesture tests load")
     if gesture_script != null and gesture_tests != null:
         gesture_tests.run(Callable(self, "check"), gesture_script)
+    var router_script: Script = load("res://game/core/input/local_input_router.gd") as Script
+    var router_tests: Script = load("res://tests/unit/test_local_input_router.gd") as Script
+    var registry_for_router: Script = load("res://game/core/input/device_registry.gd") as Script
+    check(router_script != null and router_tests != null and registry_for_router != null,
+        "M1 local router and suite load")
+    if router_script != null and router_tests != null and registry_for_router != null:
+        var router_before: int = checks
+        var router_completed: bool = router_tests.run(Callable(self, "check"), router_script, registry_for_router)
+        check(router_completed and checks - router_before >= 34,
+            "M1 router suite completed all expected checks")
     var version: Dictionary = Engine.get_version_info()
     check(version.major == 4 and version.minor == 7 and version.patch == 2,
         "approved engine version is 4.7.2")
